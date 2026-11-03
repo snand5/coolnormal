@@ -11,7 +11,6 @@ from update_data import (DEFAULT_DATA_DIRECTORY, LONGEST_ERROR_MESSAGE_KEPT,
 
 FEED_FILE = "rba-feeds.json"
 LINK_PREFIX = "https://www.rba.gov.au/"
-ENTRIES_KEPT = 3
 SECONDS_TO_WAIT_FOR_RBA = 60
 NOT_MODIFIED = 304
 RSS_1_0 = {"rss": "http://purl.org/rss/1.0/",
@@ -46,13 +45,14 @@ def entry_from_item(item):
 	return {"title": title.strip(), "link": link.strip(), "date": date[:10]}
 
 
-def parse_feed(feed_text):
+def latest_entry(feed_text):
 	root = element_tree.fromstring(feed_text)
 	items = root.findall("rss:item", RSS_1_0)
 
 	if not items:
 		raise FeedLooksWrong("the feed has no items")
-	return [entry_from_item(item) for item in items[:ENTRIES_KEPT]]
+	entries = [entry_from_item(item) for item in items]
+	return max(entries, key=lambda entry: entry["date"])
 
 
 def read_reply(request):
@@ -83,7 +83,7 @@ def refresh_feed(address, feed):
 
 	if feed_text is None:
 		return "unchanged"
-	feed["entries"] = parse_feed(feed_text)
+	feed["latest_entry"] = latest_entry(feed_text)
 	feed["last_modified"] = last_modified
 	return "updated"
 

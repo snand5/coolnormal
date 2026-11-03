@@ -56,7 +56,6 @@ const LOAD_FAILURE_MESSAGE =
 	'Data could not be loaded. Reload the page or download the JSON. ';
 const DOWNLOAD_FAILURE_MESSAGE = 'Download failed. ';
 const FEED_FILE = 'data/rba-feeds.json';
-const FEED_ENTRIES_SHOWN = 5;
 const FEED_LINK_PREFIX = 'https://www.rba.gov.au/';
 const SERIES_DESCRIPTIONS = {
 	cpi_quarterly: 'quarterly CPI',
@@ -1328,7 +1327,8 @@ function show_freshness(status)
 
 function is_shown_entry(entry)
 {
-	return typeof entry.title === 'string' && entry.title !== '' &&
+	return typeof entry === 'object' && entry !== null &&
+	       typeof entry.title === 'string' && entry.title !== '' &&
 	       typeof entry.date === 'string' &&
 	       typeof entry.link === 'string' &&
 	       entry.link.startsWith(FEED_LINK_PREFIX);
@@ -1342,11 +1342,10 @@ function newest_first_by_date(entry, other_entry)
 function feed_entries_shown(feeds_file)
 {
 	const feeds = Object.values(feeds_file.feeds || {});
-	const entries = feeds.flatMap(feed => feed.entries || []);
 
-	return entries.filter(is_shown_entry)
-		.sort(newest_first_by_date)
-		.slice(0, FEED_ENTRIES_SHOWN);
+	return feeds.map(feed => feed.latest_entry)
+		.filter(is_shown_entry)
+		.sort(newest_first_by_date);
 }
 
 function feed_source_text(entries)

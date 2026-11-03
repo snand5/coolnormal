@@ -95,26 +95,24 @@ def smp_requests(rba):
 		if request.full_url == SMP_ADDRESS]
 
 
-def test_entries_keep_title_link_and_date(rba, tmp_path):
+def test_the_latest_entry_keeps_title_link_and_date(rba, tmp_path):
 	rba.response = feed_text(statement("nov", "2026-11-03T14:30+11:00"))
 
 	assert update_feed.main(tmp_path, FIRST_DAY) == 0
-	assert read_feed(tmp_path)["entries"] == [{
+	assert read_feed(tmp_path)["latest_entry"] == {
 		"title": "Statement on Monetary Policy",
 		"link": "https://www.rba.gov.au/publications/smp/2026/nov/",
-		"date": "2026-11-03"}]
+		"date": "2026-11-03"}
 
 
-def test_only_the_latest_entries_are_kept(rba, tmp_path):
-	months = ["nov", "aug", "may", "feb"]
-	rba.response = feed_text(*[statement(month, "2026-01-01T00:00+11:00")
-				   for month in months])
+def test_only_the_newest_entry_of_a_feed_is_kept(rba, tmp_path):
+	rba.response = feed_text(statement("aug", "2026-08-12T11:30+10:00"),
+				 statement("nov", "2026-11-03T14:30+11:00"),
+				 statement("may", "2026-05-20T11:30+10:00"))
 
 	update_feed.main(tmp_path, FIRST_DAY)
-	entries = read_feed(tmp_path)["entries"]
 
-	assert len(entries) == update_feed.ENTRIES_KEPT
-	assert entries[0]["link"].endswith("/nov/")
+	assert read_feed(tmp_path)["latest_entry"]["link"].endswith("/nov/")
 
 
 def test_a_link_away_from_the_rba_is_rejected(rba, tmp_path):
@@ -122,7 +120,7 @@ def test_a_link_away_from_the_rba_is_rejected(rba, tmp_path):
 				  "2026-11-03T14:30+11:00"))
 
 	assert update_feed.main(tmp_path, FIRST_DAY) == 1
-	assert "entries" not in read_feed(tmp_path)
+	assert "latest_entry" not in read_feed(tmp_path)
 
 
 def test_request_names_the_site_and_asks_only_for_changes(rba, tmp_path):
@@ -144,7 +142,7 @@ def test_not_modified_keeps_the_entries(rba, tmp_path):
 
 	assert update_feed.main(tmp_path, NEXT_DAY) == 0
 	assert read_all(tmp_path)["checked"] == NEXT_DAY
-	assert len(read_feed(tmp_path)["entries"]) == 1
+	assert "latest_entry" in read_feed(tmp_path)
 
 
 def test_failed_fetch_keeps_the_entries_and_records_the_error(rba,
@@ -155,7 +153,7 @@ def test_failed_fetch_keeps_the_entries_and_records_the_error(rba,
 
 	assert update_feed.main(tmp_path, NEXT_DAY) == 1
 	feed = read_feed(tmp_path)
-	assert len(feed["entries"]) == 1
+	assert "latest_entry" in feed
 	assert "no route to host" in feed["error"]
 
 

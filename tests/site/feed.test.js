@@ -21,23 +21,25 @@ test('only entries that link to the RBA are shown', () => {
 				     { link: 'javascript:alert(1)' });
 	const untitled = Object.assign({}, NOVEMBER, { title: '' });
 	const feeds = { feeds: {
-		media_releases: { entries: [elsewhere, script] },
-		statement_on_monetary_policy: { entries: [NOVEMBER, untitled] },
+		media_releases: { latest_entry: elsewhere },
+		statement_on_monetary_policy: { latest_entry: NOVEMBER },
+		speeches: { latest_entry: script },
+		bulletin: { latest_entry: untitled },
 	} };
 
 	assert.deepEqual(app.feed_entries_shown(feeds), [NOVEMBER]);
 	assert.deepEqual(app.feed_entries_shown({}), []);
 });
 
-test('entries from every feed are shown newest first', () => {
+test('the latest entry of each feed is shown, newest first', () => {
 	const speech = Object.assign({}, NOVEMBER, {
 		title: 'Opening Statement',
 		link: 'https://www.rba.gov.au/speeches/2026/',
 		date: '2026-10-28',
 	});
 	const feeds = { feeds: {
-		speeches: { entries: [speech] },
-		statement_on_monetary_policy: { entries: [NOVEMBER] },
+		speeches: { latest_entry: speech },
+		statement_on_monetary_policy: { latest_entry: NOVEMBER },
 		media_releases: { error: 'HTTP 503' },
 	} };
 

@@ -32,7 +32,7 @@ Every series comes from the ABS Data API and is refreshed weekly. If the ABS is 
 
 Based on Australian Bureau of Statistics data, licensed under CC BY 4.0. The calculations on this site are not the ABS's.
 
-The sidebar lists the latest items from three RBA RSS feeds (media releases, the Statement on Monetary Policy and speeches), fetched with the weekly update: titles, dates and links only. Source: Reserve Bank of Australia, licensed under CC BY 4.0. This site is not endorsed by the RBA.
+The sidebar lists the newest item from each of three RBA RSS feeds (media releases, the Statement on Monetary Policy and speeches), fetched with the weekly update: titles, dates and links only. Source: Reserve Bank of Australia, licensed under CC BY 4.0. This site is not endorsed by the RBA.
 
 ## Running it locally
 
