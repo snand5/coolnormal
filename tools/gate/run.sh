@@ -79,12 +79,15 @@ toolchain_matches()
 	[ "$node_major" = "$NODE_MAJOR" ]
 }
 
+pinned_version()
+{
+	node -p "require('$1').devDependencies['$2']"
+}
+
 pins_match()
 {
-	commit_eslint=$(node -p "require('$source_directory/package.json')
-		.devDependencies.eslint")
-	gate_eslint=$(node -p "require('$gate_package')
-		.devDependencies.eslint")
+	commit_eslint=$(pinned_version "$source_directory/package.json" eslint)
+	gate_eslint=$(pinned_version "$gate_package" eslint)
 	echo "eslint: commit $commit_eslint, gate $gate_eslint"
 	commit_python=$(sort "$source_directory/requirements-dev.txt")
 	gate_python=$(sort "$gate_requirements")
