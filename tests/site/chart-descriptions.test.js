@@ -116,3 +116,11 @@ test('every chart has a heading its PNG title comes from', () => {
 	}
 	assert.match(PAGE, /<h2 class="chart-title" id="gap-chart-title">/);
 });
+
+test('labour data availability is one named check', () => {
+	load([0, 0]);
+	assert.equal(app.labour_data_available(), false);
+	load([0, 0], { unemployment_rate: monthly([10.9, 10.8, 10.6]),
+		       underutilisation_rate: monthly([17.2, 17.1, 16.9]) });
+	assert.equal(app.labour_data_available(), true);
+});

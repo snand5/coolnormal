@@ -947,21 +947,30 @@ function draw_wage_comparison_chart()
 	}));
 }
 
-function show_labour_figure()
+function labour_data_available()
+{
+	return labour_months.length > 0;
+}
+
+function show_labour_reading()
 {
 	const label = element_by_id('labour-label');
 	const latest = labour_months[labour_months.length - 1];
 
-	if (labour_months.length === 0) {
-		label.parentElement.hidden = true;
-		return;
-	}
 	label.parentElement.hidden = false;
 	label.textContent = 'Unemployment and underutilisation, ' +
 		month_long_name(latest);
 	element_by_id('labour-value').textContent =
 		unemployment_by_month[latest].toFixed(1) + '% and ' +
 		underutilisation_by_month[latest].toFixed(1) + '%';
+}
+
+function show_labour_figure()
+{
+	if (labour_data_available())
+		show_labour_reading();
+	else
+		element_by_id('labour-label').parentElement.hidden = true;
 }
 
 function describe_gap_chart()
@@ -1106,7 +1115,7 @@ function fill_chart_data(chart_id, rows)
 function fill_chart_data_tables()
 {
 	const wage_rows = wage_comparison_available() ? wage_table_rows() : [];
-	const labour_rows = labour_months.length > 0 ? labour_table_rows() : [];
+	const labour_rows = labour_data_available() ? labour_table_rows() : [];
 
 	fill_chart_data('gap-chart', gap_table_rows());
 	fill_chart_data('catch-up-chart', catch_up_table_rows());
@@ -1120,7 +1129,7 @@ function show_chart_descriptions()
 	set_chart_description('catch-up-chart', describe_catch_up_chart());
 	if (wage_comparison_available())
 		set_chart_description('wage-chart', describe_wage_chart());
-	if (labour_months.length > 0)
+	if (labour_data_available())
 		set_chart_description('labour-chart', describe_labour_chart());
 }
 
@@ -1294,10 +1303,11 @@ function draw_labour_chart()
 function draw_labour_section()
 {
 	const section = element_by_id('labour-chart').closest('.chart-box');
+	const is_hidden = !labour_data_available();
 
-	section.hidden = labour_months.length === 0;
-	section.previousElementSibling.hidden = labour_months.length === 0;
-	if (labour_months.length > 0)
+	section.hidden = is_hidden;
+	section.previousElementSibling.hidden = is_hidden;
+	if (labour_data_available())
 		draw_labour_chart();
 }
 
@@ -1718,6 +1728,7 @@ function functions_for_tests()
 		wage_table_rows: wage_table_rows,
 		labour_table_rows: labour_table_rows,
 		view_summary: view_summary,
+		labour_data_available: labour_data_available,
 	};
 }
 
