@@ -1,0 +1,38 @@
+{
+	"feeds": {
+		"media_releases": {
+			"entries": [
+				{
+					"title": "Statement by the Monetary Policy Board: Monetary Policy Decision",
+					"link": "https://www.rba.gov.au/media-releases/2026/mr-26-30.html",
+					"date": "2026-11-03"
+				}
+			],
+			"last_modified": "Tue, 03 Nov 2026 04:15:36 GMT",
+			"error": null
+		},
+		"statement_on_monetary_policy": {
+			"entries": [
+				{
+					"title": "Statements on Monetary Policy",
+					"link": "https://www.rba.gov.au/publications/smp/2026/nov/",
+					"date": "2026-11-03"
+				}
+			],
+			"last_modified": "Tue, 03 Nov 2026 02:45:05 GMT",
+			"error": null
+		},
+		"speeches": {
+			"entries": [
+				{
+					"title": "Opening Statement to the Senate Economics Legislation Committee (Supplementary Budget Estimates)",
+					"link": "https://www.rba.gov.au/speeches/2026/sp-gov-2026-10-28.html",
+					"date": "2026-10-28"
+				}
+			],
+			"last_modified": "Wed, 28 Oct 2026 00:08:54 GMT",
+			"error": null
+		}
+	},
+	"checked": "2026-11-03"
+}
