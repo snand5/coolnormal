@@ -1,8 +1,7 @@
 #!/bin/sh
 # Usage: tools/gate/run.sh COMMIT
-# Gates COMMIT from git archive in a scratch folder outside the repository and
-# prints a one-line verdict. GATE_ROOT moves the scratch
-# folder.
+# Gates COMMIT from git archive in a scratch folder outside the repository
+# and prints a one-line verdict. GATE_ROOT moves the scratch folder.
 set -u
 
 GATE_ROOT=${GATE_ROOT:-/tmp/pricelevel-gate}
