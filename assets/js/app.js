@@ -451,9 +451,10 @@ function wage_comparison_available()
 
 function monthly_reading_is_current()
 {
+	const quarter_end = last_month_of_quarter(latest_quarter);
+
 	return latest_monthly_change !== null &&
-	       latest_monthly_change.period >=
-	       last_month_of_quarter(latest_quarter);
+	       latest_monthly_change.period >= quarter_end;
 }
 
 function show_monthly_headline_inflation()
