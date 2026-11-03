@@ -1308,11 +1308,11 @@ function draw_labour_chart()
 function draw_labour_section()
 {
 	const section = element_by_id('labour-chart').closest('.chart-box');
-	const is_hidden = !labour_data_available();
+	const has_data = labour_data_available();
 
-	section.hidden = is_hidden;
-	element_by_id('labour-chart-title').hidden = is_hidden;
-	if (labour_data_available())
+	section.hidden = !has_data;
+	element_by_id('labour-chart-title').hidden = !has_data;
+	if (has_data)
 		draw_labour_chart();
 }
 
