@@ -276,3 +276,9 @@ test('a failed download is shown to the reader and still thrown', () => {
 	assert.equal(load_status.textContent, 'Download failed. ');
 	delete globalThis.document;
 });
+
+test('months and quarters shift the same way: positive is later', () => {
+	assert.equal(app.quarter_shifted_by('2026-Q3', -40), '2016-Q3');
+	assert.equal(app.month_shifted_by_years('2026-09', -10), '2016-09');
+	assert.equal(app.month_shifted_by_years('2016-09', 10), '2026-09');
+});

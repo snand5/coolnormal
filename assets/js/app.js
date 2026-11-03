@@ -230,9 +230,9 @@ function last_month_of_quarter(quarter)
 	return quarter_year(quarter) + '-' + String(month).padStart(2, '0');
 }
 
-function month_shifted_by_years(month, years)
+function month_shifted_by_years(month, years_to_add)
 {
-	const year = Number(month_year(month)) - years;
+	const year = Number(month_year(month)) + years_to_add;
 
 	return year + month.slice(4);
 }
@@ -1204,7 +1204,7 @@ function first_month_shown(months)
 
 	if (chart_range_years === 0)
 		return months[0];
-	return month_shifted_by_years(latest, chart_range_years);
+	return month_shifted_by_years(latest, -chart_range_years);
 }
 
 function labour_months_since_trend_base()
@@ -1629,6 +1629,7 @@ function calculations()
 {
 	return {
 		quarter_shifted_by: quarter_shifted_by,
+		month_shifted_by_years: month_shifted_by_years,
 		quarter_long_name: quarter_long_name,
 		quarter_short_name: quarter_short_name,
 		month_long_name: month_long_name,
