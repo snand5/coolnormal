@@ -191,8 +191,7 @@ def period_position(period, periods_per_year):
 	return int(year) * periods_per_year + int(number.removeprefix("Q")) - 1
 
 
-def periods_missing(series, merged):
-	periods_per_year = PERIODS_PER_YEAR[frequency(series)]
+def periods_missing(merged, periods_per_year):
 	first = period_position(min(merged), periods_per_year)
 	latest = period_position(max(merged), periods_per_year)
 
@@ -200,10 +199,12 @@ def periods_missing(series, merged):
 
 
 def check_merged(series, merged):
+	periods_per_year = PERIODS_PER_YEAR[frequency(series)]
+
 	if len(merged) < series.fewest_observations_after_merge:
 		raise SeriesLooksWrong(f"only {len(merged)} observations after "
 				       f"merging with the cache")
-	missing = periods_missing(series, merged)
+	missing = periods_missing(merged, periods_per_year)
 	if missing:
 		raise SeriesLooksWrong(f"{missing} periods missing between "
 				       f"{min(merged)} and {max(merged)}")
