@@ -16,12 +16,15 @@ repository=$(git -C "$gate_directory" rev-parse --show-toplevel)
 commit=$(git -C "$repository" rev-parse --short "${1:?usage: run.sh COMMIT}")
 gate_paths="tools/gate eslint.config.js"
 gate_commit=$(git -C "$repository" log -1 --format=%h -- $gate_paths)
-work=$GATE_ROOT/$commit-$(date +%Y%m%d-%H%M%S)
-source=$work/src
-log=$work/gate.log
+work_directory=$GATE_ROOT/$commit-$(date +%Y%m%d-%H%M%S)
+source_directory=$work_directory/src
+gate_log=$work_directory/gate.log
+javascript_results=$work_directory/javascript-tests.tap
 lock_and_requirements=$(cat "$gate_directory/package-lock.json" \
 	"$gate_directory/requirements.txt" | sha256sum | cut -c1-12)
-tools=$GATE_ROOT/tools-$lock_and_requirements
+tools_directory=$GATE_ROOT/tools-$lock_and_requirements
+venv_python=$tools_directory/venv/bin/python
+gate_node_modules=$tools_directory/node_modules
 failures=""
 not_run=""
 counts=""
@@ -34,8 +37,8 @@ stage()
 {
 	name=$1
 	shift
-	echo "== $name: $*" >>"$log"
-	if "$@" >>"$log" 2>&1; then
+	echo "== $name: $*" >>"$gate_log"
+	if "$@" >>"$gate_log" 2>&1; then
 		echo "pass $name"
 	else
 		echo "FAIL $name"
@@ -51,15 +54,16 @@ skip()
 
 install_tools()
 {
-	if [ -d "$tools/node_modules" ] && [ -x "$tools/venv/bin/python" ]; then
+	if [ -d "$gate_node_modules" ] && [ -x "$venv_python" ]; then
 		return 0
 	fi
-	mkdir -p "$tools"
+	mkdir -p "$tools_directory"
 	cp "$gate_directory/package.json" "$gate_directory/package-lock.json" \
-		"$tools/"
-	(cd "$tools" && npm ci --ignore-scripts --no-audit --no-fund) &&
-		python3 -m venv "$tools/venv" &&
-		"$tools/venv/bin/python" -m pip install -q \
+		"$tools_directory/"
+	(cd "$tools_directory" &&
+		npm ci --ignore-scripts --no-audit --no-fund) &&
+		python3 -m venv "$tools_directory/venv" &&
+		"$venv_python" -m pip install -q \
 			-r "$gate_directory/requirements.txt"
 }
 
@@ -72,12 +76,12 @@ toolchain_matches()
 
 pins_match()
 {
-	commit_eslint=$(node -p "require('$source/package.json')
+	commit_eslint=$(node -p "require('$source_directory/package.json')
 		.devDependencies.eslint")
 	gate_eslint=$(node -p "require('$gate_directory/package.json')
 		.devDependencies.eslint")
 	echo "eslint: commit $commit_eslint, gate $gate_eslint"
-	commit_python=$(sort "$source/requirements-dev.txt")
+	commit_python=$(sort "$source_directory/requirements-dev.txt")
 	gate_python=$(sort "$gate_directory/requirements.txt")
 	echo "python: commit $commit_python; gate $gate_python"
 	[ "$commit_eslint" = "$gate_eslint" ] &&
@@ -86,33 +90,33 @@ pins_match()
 
 lint_javascript()
 {
-	(cd "$source" && NODE_PATH="$tools/node_modules" \
-		node "$tools/node_modules/eslint/bin/eslint.js" .)
+	(cd "$source_directory" && NODE_PATH="$gate_node_modules" \
+		node "$gate_node_modules/eslint/bin/eslint.js" .)
 }
 
 lint_python()
 {
-	(cd "$source" && "$tools/venv/bin/python" -m pyflakes $(ls -d \
+	(cd "$source_directory" && "$venv_python" -m pyflakes $(ls -d \
 		scripts tests tools 2>/dev/null))
 }
 
 validate_html()
 {
-	(cd "$source" && node \
-		"$tools/node_modules/html-validate/bin/html-validate.mjs" \
+	(cd "$source_directory" && node \
+		"$gate_node_modules/html-validate/bin/html-validate.mjs" \
 		--config "$gate_directory/htmlvalidate.json" index.html)
 }
 
 javascript_tests()
 {
-	(cd "$source" && node --test --test-reporter=tap \
-		"tests/**/*.test.js") >"$work/javascript-tests.tap" 2>&1
+	(cd "$source_directory" && node --test --test-reporter=tap \
+		"tests/**/*.test.js") >"$javascript_results" 2>&1
 	result=$?
-	cat "$work/javascript-tests.tap"
-	passed=$(sed -n 's/^# pass //p' "$work/javascript-tests.tap")
-	total=$(sed -n 's/^# tests //p' "$work/javascript-tests.tap")
-	skipped=$(sed -n 's/^# skipped //p' "$work/javascript-tests.tap")
-	todo=$(sed -n 's/^# todo //p' "$work/javascript-tests.tap")
+	cat "$javascript_results"
+	passed=$(sed -n 's/^# pass //p' "$javascript_results")
+	total=$(sed -n 's/^# tests //p' "$javascript_results")
+	skipped=$(sed -n 's/^# skipped //p' "$javascript_results")
+	todo=$(sed -n 's/^# todo //p' "$javascript_results")
 	counts="$counts JS ${passed:-0}/${total:-0}"
 	counts="$counts (skipped ${skipped:-?}, todo ${todo:-?});"
 	[ "$result" -eq 0 ] && [ "${skipped:-1}" = 0 ] && [ "${todo:-1}" = 0 ]
@@ -120,12 +124,12 @@ javascript_tests()
 
 python_tests()
 {
-	(cd "$source" && PYTHONDONTWRITEBYTECODE=1 "$tools/venv/bin/python" \
+	(cd "$source_directory" && PYTHONDONTWRITEBYTECODE=1 "$venv_python" \
 		-m pytest -q -rs -p no:cacheprovider tests) \
-		>"$work/python-tests.txt" 2>&1
+		>"$work_directory/python-tests.txt" 2>&1
 	result=$?
-	cat "$work/python-tests.txt"
-	summary=$(tail -n 1 "$work/python-tests.txt")
+	cat "$work_directory/python-tests.txt"
+	summary=$(tail -n 1 "$work_directory/python-tests.txt")
 	counts="$counts Python: $summary;"
 	[ "$result" -eq 0 ] && ! echo "$summary" | grep -q "skipped"
 }
@@ -141,15 +145,16 @@ print(s.getsockname()[1])'
 browser_smoke()
 {
 	port=$(free_port)
-	python3 -m http.server --bind 127.0.0.1 --directory "$source" "$port" \
-		>"$work/server.log" 2>&1 &
+	(cd "$source_directory" &&
+		exec python3 -m http.server --bind 127.0.0.1 "$port") \
+		>"$work_directory/server.log" 2>&1 &
 	server=$!
 	sleep 1
-	mkdir -p "$work/screenshots"
-	NODE_PATH="$tools/node_modules" flock -w \
+	mkdir -p "$work_directory/screenshots"
+	NODE_PATH="$gate_node_modules" flock -w \
 		"$SECONDS_TO_WAIT_FOR_BROWSER_LOCK" "$BROWSER_LOCK" \
 		node "$gate_directory/smoke.js" "http://127.0.0.1:$port/" \
-		"$work/screenshots"
+		"$work_directory/screenshots"
 	result=$?
 	kill "$server"
 	return "$result"
@@ -171,32 +176,33 @@ check_circuit_breaker()
 	fi
 }
 
-mkdir -p "$source"
-git -C "$repository" archive "$commit" | tar -x -C "$source"
-echo "gate $commit from git archive into $source (gate scripts $gate_commit)" |
-	tee "$log"
+mkdir -p "$source_directory"
+git -C "$repository" archive "$commit" | tar -x -C "$source_directory"
+echo "gate $commit from git archive into $source_directory (gate scripts $gate_commit)" |
+	tee "$gate_log"
 
 stage toolchain toolchain_matches
 stage install-gate-tools install_tools
-if [ -f "$source/package.json" ] && [ -f "$source/requirements-dev.txt" ]; then
+if [ -f "$source_directory/package.json" ] &&
+	[ -f "$source_directory/requirements-dev.txt" ]; then
 	stage tool-pins pins_match
 else
 	skip tool-pins "no package.json or requirements-dev.txt in $commit"
 fi
-if [ ! -f "$source/eslint.config.js" ]; then
-	cp "$repository/eslint.config.js" "$source/"
+if [ ! -f "$source_directory/eslint.config.js" ]; then
+	cp "$repository/eslint.config.js" "$source_directory/"
 	echo "eslint.config.js not in $commit; using gate's ($gate_commit)" |
-		tee -a "$log"
+		tee -a "$gate_log"
 fi
 stage lint-javascript lint_javascript
 stage lint-python lint_python
 stage validate-html validate_html
-if ls "$source"/tests/*/*.test.js >/dev/null 2>&1; then
+if ls "$source_directory"/tests/*/*.test.js >/dev/null 2>&1; then
 	stage javascript-tests javascript_tests
 else
 	skip javascript-tests "no tests/**/*.test.js in $commit"
 fi
-if ls "$source"/tests/*/test_*.py >/dev/null 2>&1; then
+if ls "$source_directory"/tests/*/test_*.py >/dev/null 2>&1; then
 	stage python-tests python_tests
 else
 	skip python-tests "no tests/**/test_*.py in $commit"
@@ -211,5 +217,5 @@ echo "$(date '+%Y-%m-%d %H:%M %Z') | $commit | Linux, Node $(node --version)," \
 	"Python $(python3 --version | cut -d' ' -f2), Chromium headless shell" \
 	"(Playwright 1.62.1) | tools/gate/run.sh $commit (gate scripts" \
 	"$gate_commit) | VERDICT $verdict;$counts not run:${not_run:- none};" \
-	"failed:${failures:- none}; log $log" | tee -a "$log"
+	"failed:${failures:- none}; log $gate_log" | tee -a "$gate_log"
 [ "$verdict" = PASSED ]
