@@ -8,6 +8,7 @@ GATE_ROOT=${GATE_ROOT:-/tmp/pricelevel-gate}
 NODE_MAJOR=24
 BROWSER_LOCK=/tmp/pricelevel-browser.lock
 SECONDS_TO_WAIT_FOR_BROWSER_LOCK=1800
+SECONDS_FOR_SERVER_TO_START=1
 IDENTICAL_FAILURES_BEFORE_STOPPING=3
 
 gate_directory=$(cd "$(dirname "$0")" && pwd)
@@ -162,7 +163,7 @@ browser_smoke()
 	server=$!
 	page_address=http://127.0.0.1:$port/
 	screenshot_directory=$work_directory/screenshots
-	sleep 1
+	sleep "$SECONDS_FOR_SERVER_TO_START"
 	mkdir -p "$screenshot_directory"
 	(
 		flock -w "$SECONDS_TO_WAIT_FOR_BROWSER_LOCK" 9 || exit
