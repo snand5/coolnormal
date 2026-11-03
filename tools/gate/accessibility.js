@@ -64,20 +64,21 @@ function measure_page({ non_text_roles, wcag, channel_maximum })
 			 blue: mix('blue'), alpha: 1 };
 	}
 
+	function linear_channel(value)
+	{
+		const fraction = value / channel_maximum;
+
+		if (fraction <= wcag.linear_threshold)
+			return fraction / wcag.linear_divisor;
+		return Math.pow((fraction + wcag.gamma_offset) /
+				(1 + wcag.gamma_offset), wcag.gamma);
+	}
+
 	function luminance(colour)
 	{
-		const linear = value => {
-			const fraction = value / channel_maximum;
-
-			if (fraction <= wcag.linear_threshold)
-				return fraction / wcag.linear_divisor;
-			return Math.pow((fraction + wcag.gamma_offset) /
-					(1 + wcag.gamma_offset), wcag.gamma);
-		};
-
-		return wcag.red_weight * linear(colour.red) +
-			wcag.green_weight * linear(colour.green) +
-			wcag.blue_weight * linear(colour.blue);
+		return wcag.red_weight * linear_channel(colour.red) +
+			wcag.green_weight * linear_channel(colour.green) +
+			wcag.blue_weight * linear_channel(colour.blue);
 	}
 
 	function ratio(first, second)
