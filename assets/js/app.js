@@ -1668,7 +1668,7 @@ function start()
 		.catch(show_load_error);
 }
 
-function calculations()
+function functions_for_tests()
 {
 	return {
 		quarter_shifted_by: quarter_shifted_by,
@@ -1722,6 +1722,6 @@ function calculations()
 }
 
 if (typeof window === 'undefined')
-	module.exports = calculations();
+	module.exports = functions_for_tests();
 else
 	start();
