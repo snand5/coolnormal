@@ -1,3 +1,4 @@
+import http.client
 import io
 import json
 import urllib.error
@@ -50,7 +51,9 @@ def statement(month, date):
 
 class Reply(io.BytesIO):
 	def __init__(self, text, last_modified):
-		super().__init__(text.encode("utf-8"))
+		body = text if isinstance(text, bytes) else text.encode("utf-8")
+
+		super().__init__(body)
 		self.headers = {"Last-Modified": last_modified}
 
 	def __enter__(self):
@@ -120,6 +123,23 @@ def test_an_entry_without_an_iso_date_is_rejected(rba, tmp_path):
 
 	assert update_feed.main(tmp_path, FIRST_DAY) == 1
 	assert "latest_entry" not in read_feed(tmp_path)
+
+
+@pytest.mark.parametrize("reply", [
+	b"<rdf:RDF>\xff\xfe</rdf:RDF>",
+	http.client.IncompleteRead(b"<rdf:RDF"),
+])
+def test_a_garbled_or_cut_off_reply_keeps_the_last_entry(rba, tmp_path,
+							  reply):
+	rba.response = feed_text(statement("nov", "2026-11-03T14:30+11:00"))
+	update_feed.main(tmp_path, FIRST_DAY)
+	rba.response = reply
+
+	assert update_feed.main(tmp_path, NEXT_DAY) == 1
+	feed = read_feed(tmp_path)
+	assert feed["latest_entry"]["link"].endswith("/nov/")
+	assert feed["error"]
+	assert read_all(tmp_path)["checked"] == NEXT_DAY
 
 
 def test_a_link_away_from_the_rba_is_rejected(rba, tmp_path):

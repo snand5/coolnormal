@@ -1,5 +1,6 @@
 import collections
 import datetime
+import http.client
 import json
 import sys
 import urllib.error
@@ -56,8 +57,8 @@ def entry_from_item(item):
 	return {"title": title.strip(), "link": link, "date": iso_date(date)}
 
 
-def latest_entry(feed_text):
-	root = element_tree.fromstring(feed_text)
+def latest_entry(feed_bytes):
+	root = element_tree.fromstring(feed_bytes)
 	items = root.findall("rss:item", RSS_1_0)
 
 	if not items:
@@ -69,9 +70,9 @@ def latest_entry(feed_text):
 def read_reply(request):
 	with urllib.request.urlopen(request,
 				    timeout=SECONDS_TO_WAIT_FOR_RBA) as reply:
-		feed_text = reply.read().decode("utf-8")
+		feed_bytes = reply.read()
 
-		return feed_text, reply.headers.get("Last-Modified")
+		return feed_bytes, reply.headers.get("Last-Modified")
 
 
 def fetch_feed(address, last_modified):
@@ -89,12 +90,12 @@ def fetch_feed(address, last_modified):
 
 
 def refresh_feed(address, feed):
-	last_modified = feed.get("last_modified")
-	feed_text, last_modified = fetch_feed(address, last_modified)
+	feed_bytes, last_modified = fetch_feed(address,
+					       feed.get("last_modified"))
 
-	if feed_text is None:
+	if feed_bytes is None:
 		return "unchanged"
-	feed["latest_entry"] = latest_entry(feed_text)
+	feed["latest_entry"] = latest_entry(feed_bytes)
 	feed["last_modified"] = last_modified
 	return "updated"
 
@@ -103,7 +104,8 @@ def refresh_and_record(address, feed):
 	try:
 		outcome = refresh_feed(address, feed)
 		feed["error"] = None
-	except (OSError, element_tree.ParseError, FeedLooksWrong) as error:
+	except (OSError, http.client.HTTPException, element_tree.ParseError,
+		FeedLooksWrong) as error:
 		outcome = "failed"
 		feed["error"] = str(error)[:LONGEST_ERROR_MESSAGE_KEPT]
 	return outcome
