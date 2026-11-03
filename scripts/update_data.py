@@ -29,6 +29,36 @@ BUILT_IN_DATA_FILE = "built-in-data.js"
 BUILT_IN_DATA_PREFIX = "window.BUILT_IN_DATA = "
 BUILT_IN_DATA_SUFFIX = ";\n"
 PERIODS_PER_YEAR = {"Q": 4, "M": 12}
+RBA_G1_INTEREST_AND_TAX_ADJUSTMENT = [
+	("1993-Q4", 0.0, 0.6),
+	("1994-Q1", 0.5, 0.5),
+	("1994-Q2", 0.7, 0.7),
+	("1994-Q3", 0.6, 0.6),
+	("1994-Q4", 1.0, 0.5),
+	("1995-Q1", 1.6, 0.9),
+	("1995-Q2", 1.3, 1.1),
+	("1995-Q3", 1.2, 1.3),
+	("1995-Q4", 0.8, 0.7),
+	("1996-Q1", 0.5, 0.4),
+	("1996-Q2", 0.6, 0.7),
+	("1996-Q3", 0.3, 0.4),
+	("1996-Q4", 0.3, 0.7),
+	("1997-Q1", 0.0, 0.7),
+	("1997-Q2", -0.3, 0.3),
+	("1997-Q3", -0.3, -0.1),
+	("1997-Q4", 0.3, 0.7),
+	("1998-Q1", 0.1, 0.3),
+	("1998-Q2", 0.6, 0.6),
+	("1998-Q3", 0.3, 0.3),
+	("1998-Q4", 0.4, 0.4),
+	("1999-Q1", -0.1, -0.1),
+	("1999-Q2", 0.4, 0.4),
+	("1999-Q3", 0.9, 0.9),
+	("1999-Q4", 0.6, 0.4),
+	("2000-Q1", 0.9, 0.7),
+	("2000-Q2", 0.7, 0.6),
+	("2000-Q3", 3.8, 0.8),
+]
 PERIOD_FORMS = {
 	"Q": re.compile(r"[0-9]{4}-Q[1-4]"),
 	"M": re.compile(r"[0-9]{4}-(0[1-9]|1[0-2])"),
@@ -291,6 +321,12 @@ def built_in_copy_text(data_text):
 	return BUILT_IN_DATA_PREFIX + data_text + BUILT_IN_DATA_SUFFIX
 
 
+def interest_and_tax_adjustment():
+	return [{"period": period, "headline": headline, "adjusted": adjusted}
+		for period, headline, adjusted
+		in RBA_G1_INTEREST_AND_TAX_ADJUSTMENT]
+
+
 def write_results(data_directory, data, status):
 	data_text = json.dumps(data, separators=(",", ":"), allow_nan=False)
 
@@ -316,6 +352,7 @@ def main(data_directory=DEFAULT_DATA_DIRECTORY, today=None):
 	monthly_change = latest_monthly_change(data)
 	if monthly_change is not None:
 		data["latest_monthly_change"] = monthly_change
+	data["interest_and_tax_adjustment"] = interest_and_tax_adjustment()
 	if not data.get("cpi_quarterly"):
 		sys.exit(NO_DATA_MESSAGE)
 

@@ -1,5 +1,7 @@
+import csv
 import io
 import json
+import pathlib
 import urllib.error
 
 import pytest
@@ -509,3 +511,23 @@ def test_monthly_reading_is_stored_as_latest_monthly_change(abs_api,
 	assert data["latest_monthly_change"] == {
 		"period": "2026-09", "annual_change": 2.5}
 	assert "latest_month" not in data
+
+
+def rba_g1_extract():
+	path = (pathlib.Path(__file__).resolve().parents[1] / "data" /
+		"fixtures" / "rba-g1-interest-and-tax.csv")
+	lines = [line for line in path.read_text().splitlines()
+		 if not line.startswith("#")]
+
+	return [{"period": row["quarter"],
+		 "headline": float(row["GCPIAGSAQP"]),
+		 "adjusted": float(row["GCPIEITCQP"])}
+		for row in csv.DictReader(lines)]
+
+
+def test_interest_and_tax_adjustment_is_the_rba_series(abs_api, tmp_path):
+	answer_both(abs_api, steady_cpi(), steady_rates())
+	update_data.main(tmp_path, FIRST_DAY)
+	data, _, _ = read_back(tmp_path)
+
+	assert data["interest_and_tax_adjustment"] == rba_g1_extract()
