@@ -168,8 +168,8 @@ function measure_page({ non_text_roles, wcag, channel_maximum })
 		probe.remove();
 		const page = background_of(document.body);
 
-		return { role: role, ratio:
-			 Math.round(ratio(colour, page) * 100) / 100,
+		return { role: role,
+			 ratio: Math.round(ratio(colour, page) * 100) / 100,
 			 needed: wcag.non_text_ratio };
 	}
 
