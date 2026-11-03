@@ -115,6 +115,13 @@ def test_only_the_newest_entry_of_a_feed_is_kept(rba, tmp_path):
 	assert read_feed(tmp_path)["latest_entry"]["link"].endswith("/nov/")
 
 
+def test_an_entry_without_an_iso_date_is_rejected(rba, tmp_path):
+	rba.response = feed_text(statement("nov", "3 November 2026"))
+
+	assert update_feed.main(tmp_path, FIRST_DAY) == 1
+	assert "latest_entry" not in read_feed(tmp_path)
+
+
 def test_a_link_away_from_the_rba_is_rejected(rba, tmp_path):
 	rba.response = feed_text(("Elsewhere", "https://example.org/",
 				  "2026-11-03T14:30+11:00"))

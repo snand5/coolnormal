@@ -56,6 +56,7 @@ const LOAD_FAILURE_MESSAGE =
 	'Data could not be loaded. Reload the page or download the JSON. ';
 const DOWNLOAD_FAILURE_MESSAGE = 'Download failed. ';
 const FEED_FILE = 'data/rba-feeds.json';
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const FEED_LINK_PREFIX = 'https://www.rba.gov.au/';
 const SERIES_DESCRIPTIONS = {
 	cpi_quarterly: 'quarterly CPI',
@@ -1329,7 +1330,7 @@ function is_shown_entry(entry)
 {
 	return typeof entry === 'object' && entry !== null &&
 	       typeof entry.title === 'string' && entry.title !== '' &&
-	       typeof entry.date === 'string' &&
+	       typeof entry.date === 'string' && ISO_DATE.test(entry.date) &&
 	       typeof entry.link === 'string' &&
 	       entry.link.startsWith(FEED_LINK_PREFIX);
 }

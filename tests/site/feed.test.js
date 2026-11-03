@@ -20,11 +20,13 @@ test('only entries that link to the RBA are shown', () => {
 	const script = Object.assign({}, NOVEMBER,
 				     { link: 'javascript:alert(1)' });
 	const untitled = Object.assign({}, NOVEMBER, { title: '' });
+	const undated = Object.assign({}, NOVEMBER, { date: '3 Nov 2026' });
 	const feeds = { feeds: {
 		media_releases: { latest_entry: elsewhere },
 		statement_on_monetary_policy: { latest_entry: NOVEMBER },
 		speeches: { latest_entry: script },
 		bulletin: { latest_entry: untitled },
+		research: { latest_entry: undated },
 	} };
 
 	assert.deepEqual(app.feed_entries_shown(feeds), [NOVEMBER]);

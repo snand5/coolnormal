@@ -11,6 +11,7 @@ from update_data import (DEFAULT_DATA_DIRECTORY, LONGEST_ERROR_MESSAGE_KEPT,
 
 FEED_FILE = "rba-feeds.json"
 LINK_PREFIX = "https://www.rba.gov.au/"
+ISO_DATE_LENGTH = len("2026-11-03")
 SECONDS_TO_WAIT_FOR_RBA = 60
 NOT_MODIFIED = 304
 RSS_1_0 = {"rss": "http://purl.org/rss/1.0/",
@@ -33,6 +34,15 @@ class FeedLooksWrong(Exception):
 	pass
 
 
+def iso_date(text):
+	date = text.strip()[:ISO_DATE_LENGTH]
+
+	try:
+		return datetime.date.fromisoformat(date).isoformat()
+	except ValueError:
+		raise FeedLooksWrong(f"date {text!r} is not an ISO date") from None
+
+
 def entry_from_item(item):
 	title = item.findtext("rss:title", namespaces=RSS_1_0)
 	link = item.findtext("rss:link", namespaces=RSS_1_0)
@@ -43,7 +53,7 @@ def entry_from_item(item):
 	link = link.strip()
 	if not link.startswith(LINK_PREFIX):
 		raise FeedLooksWrong(f"link {link!r} is not on {LINK_PREFIX}")
-	return {"title": title.strip(), "link": link, "date": date[:10]}
+	return {"title": title.strip(), "link": link, "date": iso_date(date)}
 
 
 def latest_entry(feed_text):
