@@ -49,7 +49,7 @@ test('the latest entry of each feed is shown, newest first', () => {
 });
 
 test('the feed is credited to the RBA with the year', () => {
-	assert.equal(app.feed_source_text([NOVEMBER]), 'Source: RBA 2026.');
+	assert.equal(app.feed_credit([NOVEMBER]), 'Source: RBA 2026.');
 });
 
 test('the feed box is in the page and hidden until it has entries', () => {

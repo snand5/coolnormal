@@ -1349,9 +1349,11 @@ function feed_entries_shown(feeds_file)
 		.sort(newest_first_by_date);
 }
 
-function feed_source_text(entries)
+function feed_credit(entries)
 {
-	return 'Source: RBA ' + entries[0].date.slice(0, 4) + '.';
+	const newest_year = entries[0].date.slice(0, 4);
+
+	return 'Source: RBA ' + newest_year + '.';
 }
 
 function feed_entry_item(entry)
@@ -1374,7 +1376,7 @@ function show_feed(feeds_file)
 	element_by_id('rba-feed-entries').replaceChildren(
 		...entries.map(feed_entry_item));
 	element_by_id('rba-feed-source').textContent =
-		feed_source_text(entries);
+		feed_credit(entries);
 	element_by_id('rba-feed').hidden = false;
 }
 
@@ -1795,7 +1797,7 @@ function functions_for_tests()
 		view_summary: view_summary,
 		labour_data_available: labour_data_available,
 		feed_entries_shown: feed_entries_shown,
-		feed_source_text: feed_source_text,
+		feed_credit: feed_credit,
 	};
 }
 
