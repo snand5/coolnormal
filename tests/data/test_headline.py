@@ -5,7 +5,7 @@ import pytest
 from recompute import (BASE_QUARTER, PriceLevel, cpi_with_gaps, position,
 		       quarter_at, read_json)
 
-EXPECTED = read_json("expected-2026-10-29.json")
+EXPECTED = read_json("expected-2026-11-04.json")
 CASES = read_json("cases.json")
 FIXTURE = read_json(EXPECTED["fixture"])
 RUN_CASE_PATH_RATE = 2.5

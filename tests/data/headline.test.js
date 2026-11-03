@@ -3,7 +3,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const app = require('../../assets/js/app.js');
-const expected = require('./expected-2026-10-29.json');
+const expected = require('./expected-2026-11-04.json');
 const cases = require('./cases.json');
 const fixture = require('./' + expected.fixture);
 

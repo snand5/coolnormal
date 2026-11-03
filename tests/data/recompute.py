@@ -1,3 +1,4 @@
+import csv
 import json
 import math
 import pathlib
@@ -9,6 +10,7 @@ LOWEST_CATCH_UP_RATE_IN_HUNDREDTHS = 100
 HIGHEST_CATCH_UP_RATE_IN_HUNDREDTHS = 400
 CATCH_UP_STEP_IN_HUNDREDTHS = 25
 SYNTHETIC_BASE_INDEX = 100
+RBA_EXTRACT = "fixtures/rba-g1-interest-and-tax.csv"
 
 
 def read_json(name):
@@ -29,6 +31,19 @@ def quarter_at(quarter_position):
 	return f"{year}-Q{index + 1}"
 
 
+def rba_adjustment_factors():
+	lines = [line for line in (HERE / RBA_EXTRACT).read_text().splitlines()
+		 if not line.startswith("#")]
+	factors = {}
+	factor = 1.0
+
+	for row in csv.DictReader(lines):
+		factor *= ((1 + float(row["GCPIEITCQP"]) / 100) /
+			   (1 + float(row["GCPIAGSAQP"]) / 100))
+		factors[row["quarter"]] = factor
+	return factors
+
+
 def years_from(first_quarter, quarter):
 	return (position(quarter) - position(first_quarter)) / QUARTERS_PER_YEAR
 
@@ -39,12 +54,21 @@ class PriceLevel:
 		self.wpi = by_period(data.get("wpi_quarterly", []))
 		self.trend_rate = trend_rate
 		self.latest = max(self.cpi)
+		self.factors = {}
+		if "interest_and_tax_adjustment" in data:
+			self.factors = rba_adjustment_factors()
+
+	def price_level(self, quarter):
+		adjusted = [q for q in self.factors if q <= quarter]
+		factor = self.factors[max(adjusted)] if adjusted else 1.0
+
+		return self.cpi[quarter] * factor
 
 	def gap(self, quarter):
 		growth = (1 + self.trend_rate / 100) ** years_from(BASE_QUARTER,
 								   quarter)
-		trend = self.cpi[BASE_QUARTER] * growth
-		return (self.cpi[quarter] / trend - 1) * 100
+		trend = self.price_level(BASE_QUARTER) * growth
+		return (self.price_level(quarter) / trend - 1) * 100
 
 	def above(self, quarter):
 		return self.gap(quarter) >= 0
@@ -71,7 +95,8 @@ class PriceLevel:
 		return run_is_above, first, length
 
 	def average_inflation(self):
-		growth = self.cpi[self.latest] / self.cpi[BASE_QUARTER]
+		growth = (self.price_level(self.latest) /
+			  self.price_level(BASE_QUARTER))
 		years = years_from(BASE_QUARTER, self.latest)
 		return (growth ** (1 / years) - 1) * 100
 

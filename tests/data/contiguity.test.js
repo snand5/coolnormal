@@ -3,7 +3,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const app = require('../../assets/js/app.js');
-const fixture = require('./fixtures/data-2026-10-29.json');
+const fixture = require('./fixtures/data-2026-11-04.json');
 
 const SERIES_THE_PAGE_LOADS = [
 	'cpi_quarterly', 'wpi_quarterly', 'unemployment_rate',

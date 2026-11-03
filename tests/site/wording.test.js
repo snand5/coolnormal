@@ -31,20 +31,22 @@ function page_cpi_note()
 
 function readme_cpi_paragraph()
 {
-	const paragraph = read('README.md').match(/^The CPI is .*$/m);
+	const paragraph = read('README.md').match(/^The price level is .*$/m);
 
-	assert.ok(paragraph, 'README has no paragraph starting "The CPI is"');
+	assert.ok(paragraph,
+		  'README has no paragraph starting "The price level is"');
 	return paragraph[0];
 }
 
 function assert_states_cpi_composition(text)
 {
-	assert.match(text, /all groups CPI as published/);
-	assert.match(text, /1999–2000 tax changes, among them the GST/);
-	assert.match(text, /3\.73 per cent in the September quarter 2000/);
-	assert.match(text, /before the September quarter 1998/);
-	assert.match(text, /interest charges/);
-	assert.match(text, /RBA's own averages/);
+	assert.match(text, /ABS all groups CPI/);
+	assert.match(text,
+		     /interest charges before the September quarter 1998/);
+	assert.match(text, /1999–2000 tax changes, including the GST/);
+	assert.match(text, /RBA table G1/);
+	assert.match(text, /as the RBA does/);
+	assert.match(text, /Headline inflation is the CPI as published/);
 }
 
 test('nothing says inflation targeting began in 1993', () => {
@@ -63,11 +65,11 @@ test('the trend is described as running from the September quarter 1993',
 	assert.match(read('README.md'), base_is_a_choice);
 });
 
-test('the page states what headline CPI includes', () => {
+test('the page states how the price level is adjusted', () => {
 	assert_states_cpi_composition(page_cpi_note());
 });
 
-test('the README states what headline CPI includes',
+test('the README states how the price level is adjusted',
      () => {
 	assert_states_cpi_composition(readme_cpi_paragraph());
 });

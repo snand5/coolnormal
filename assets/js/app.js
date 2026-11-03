@@ -74,6 +74,7 @@ let cpi_quarters = [];
 let latest_quarter = '';
 let latest_wpi_quarter = '';
 let latest_monthly_change = null;
+let adjustment_by_quarter = {};
 let unemployment_by_month = {};
 let underutilisation_by_month = {};
 let labour_months = [];
@@ -279,6 +280,33 @@ function contiguous(series, position_of, name)
 	return series;
 }
 
+function adjustment_ratio(entry)
+{
+	const values = [entry.headline, entry.adjusted];
+
+	if (!values.every(Number.isFinite))
+		throw new Error('Expected numbers for the adjustment in ' +
+				entry.period);
+	return (1 + entry.adjusted / 100) / (1 + entry.headline / 100);
+}
+
+function cumulative_adjustment(entries)
+{
+	const by_quarter = {};
+	let factor = 1;
+
+	for (const entry of entries.slice().sort(earlier_period_first)) {
+		factor *= adjustment_ratio(entry);
+		by_quarter[entry.period] = factor;
+	}
+	return by_quarter;
+}
+
+function earlier_period_first(entry, other_entry)
+{
+	return entry.period.localeCompare(other_entry.period);
+}
+
 function load_data(data)
 {
 	at_least_one(data.cpi_quarterly, 'CPI observation');
@@ -290,6 +318,8 @@ function load_data(data)
 	latest_quarter = cpi_quarters[cpi_quarters.length - 1];
 	latest_wpi_quarter = Object.keys(wpi_by_quarter).sort().pop() || '';
 	latest_monthly_change = data.latest_monthly_change || null;
+	adjustment_by_quarter = cumulative_adjustment(
+		data.interest_and_tax_adjustment || []);
 	unemployment_by_month = contiguous(
 		series_by_period(data.unemployment_rate || []),
 		month_position, 'unemployment_rate');
@@ -308,17 +338,32 @@ function years_since_trend_base(quarter)
 	return quarters_elapsed / QUARTERS_PER_YEAR;
 }
 
+function adjustment_factor(quarter)
+{
+	const adjusted_quarters = Object.keys(adjustment_by_quarter)
+		.filter(adjusted => adjusted <= quarter).sort();
+
+	if (adjusted_quarters.length === 0)
+		return 1;
+	return adjustment_by_quarter[adjusted_quarters.pop()];
+}
+
+function price_level(quarter)
+{
+	return cpi_by_quarter[quarter] * adjustment_factor(quarter);
+}
+
 function trend_price_level(quarter)
 {
 	const growth = Math.pow(1 + trend_rate / 100,
 				years_since_trend_base(quarter));
 
-	return cpi_by_quarter[TREND_BASE_QUARTER] * growth;
+	return price_level(TREND_BASE_QUARTER) * growth;
 }
 
 function percent_above_trend(quarter)
 {
-	return (cpi_by_quarter[quarter] / trend_price_level(quarter) - 1) * 100;
+	return (price_level(quarter) / trend_price_level(quarter) - 1) * 100;
 }
 
 function is_above_trend(quarter)
@@ -374,8 +419,7 @@ function years_back_to_trend(average_inflation)
 
 function average_inflation_since_trend_base(quarter)
 {
-	const growth = cpi_by_quarter[quarter] /
-		       cpi_by_quarter[TREND_BASE_QUARTER];
+	const growth = price_level(quarter) / price_level(TREND_BASE_QUARTER);
 	const years = years_since_trend_base(quarter);
 
 	return (Math.pow(growth, 1 / years) - 1) * 100;

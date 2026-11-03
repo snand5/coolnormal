@@ -298,3 +298,40 @@ test('the base quarter and band edges are written once, as constants', () => {
 	assert.equal(source.match(/1993/g).length, 1);
 	assert.doesNotMatch(source, /'Path at [0-9]/);
 });
+
+const RBA_ADJUSTMENT = [
+	{ period: '1993-Q4', headline: 0.0, adjusted: 0.6 },
+	{ period: '1994-Q1', headline: 0.5, adjusted: 0.5 },
+];
+const WITH_ADJUSTMENT = { interest_and_tax_adjustment: RBA_ADJUSTMENT };
+
+test('the RBA interest and tax adjustment moves the price level', () => {
+	load([0, 0, 0, 0, 0], WITH_ADJUSTMENT);
+
+	assert_close(app.percent_above_trend('1993-Q3'), 0);
+	assert_close(app.percent_above_trend('1994-Q3'), 0.6);
+	assert_close(app.average_inflation_since_trend_base('1994-Q3'),
+		     (1.025 * 1.006 - 1) * 100);
+});
+
+test('real wages use the CPI as published, not the adjustment', () => {
+	const wages = cpi_with_gaps([0, 1, 2, 3, 4]).map(cpi => ({
+		period: cpi.period,
+		value: 100 + cpi.value,
+	}));
+	const with_wages = { wpi_quarterly: wages };
+	const adjusted = Object.assign({}, WITH_ADJUSTMENT, with_wages);
+
+	load([0, 0, 0, 0, 0], with_wages);
+	const published = app.wages_relative_to_prices('1993-Q3', '1994-Q3');
+
+	load([0, 0, 0, 0, 0], adjusted);
+	assert_close(app.wages_relative_to_prices('1993-Q3', '1994-Q3'),
+		     published);
+});
+
+test('data without the adjustment uses the CPI as published', () => {
+	load([0, 0, 0, 0, 0]);
+
+	assert_close(app.percent_above_trend('1994-Q3'), 0);
+});

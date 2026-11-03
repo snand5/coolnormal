@@ -7,7 +7,7 @@ import urllib.request
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "scripts" / "update_data.py"
 FIXTURE = (pathlib.Path(__file__).resolve().parent / "fixtures" /
-	   "data-2026-10-29.json")
+	   "data-2026-11-04.json")
 TODAY = "2026-10-30"
 
 
