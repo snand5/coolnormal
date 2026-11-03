@@ -440,8 +440,10 @@ function wage_comparison_available()
 {
 	if (!latest_wpi_quarter)
 		return false;
-	return wage_comparison_window().first_quarter <
-	       wage_comparison_window().last_quarter;
+
+	const comparison = wage_comparison_window();
+
+	return comparison.first_quarter < comparison.last_quarter;
 }
 
 function monthly_reading_is_current()
