@@ -230,7 +230,8 @@ check_circuit_breaker
 verdict=PASSED
 [ -n "$failures" ] && verdict=FAILED
 echo
-platform="Linux, Node $(node --version), Python $(python3 --version | cut -d' ' -f2), Chromium headless shell (Playwright 1.62.1)"
+playwright_version=$(pinned_version "$gate_package" playwright)
+platform="Linux, Node $(node --version), Python $(python3 --version | cut -d' ' -f2), Chromium headless shell (Playwright $playwright_version)"
 echo "$(date '+%Y-%m-%d %H:%M %Z') | $commit | $platform | tools/gate/run.sh $commit (gate scripts $gate_commit) | VERDICT $verdict;$counts not run:${not_run:- none}; failed:${failures:- none}; log $gate_log" |
 	tee -a "$gate_log"
 [ "$verdict" = PASSED ]
