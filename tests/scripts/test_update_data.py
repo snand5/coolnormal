@@ -389,7 +389,7 @@ def test_no_cpi_fetched_or_cached_writes_nothing(abs_api, tmp_path):
 	assert not (tmp_path / "data.json").exists()
 
 
-def test_latest_month_is_the_annual_change_of_monthly_cpi():
+def test_latest_monthly_change_is_the_annual_change_of_monthly_cpi():
 	monthly = {"2025-09": 120.0, "2026-08": 122.0, "2026-09": 123.0}
 	data = {"cpi_monthly": as_observations(monthly)}
 
@@ -397,7 +397,7 @@ def test_latest_month_is_the_annual_change_of_monthly_cpi():
 		"period": "2026-09", "annual_change": 2.5}
 
 
-def test_latest_month_needs_the_month_a_year_earlier():
+def test_latest_monthly_change_needs_the_month_a_year_earlier():
 	monthly = {"2025-10": 120.0, "2026-09": 123.0}
 	data = {"cpi_monthly": as_observations(monthly)}
 
@@ -492,3 +492,20 @@ def test_a_missing_month_is_rejected_too(abs_api, tmp_path):
 	assert update_data.main(tmp_path, FIRST_DAY) == 1
 	data, status, values = read_back(tmp_path)
 	assert values["unemployment_rate"] == steady_rates(12)
+
+
+def test_monthly_reading_is_stored_as_latest_monthly_change(abs_api,
+							    tmp_path):
+	monthly = {"2025-09": 120.0, "2026-09": 123.0}
+
+	answer_both(abs_api, steady_cpi(), steady_rates())
+	write_cache(tmp_path, steady_cpi(), steady_rates())
+	cache = json.loads((tmp_path / "data.json").read_text())
+	cache["cpi_monthly"] = as_observations(monthly)
+	(tmp_path / "data.json").write_text(json.dumps(cache))
+	update_data.main(tmp_path, FIRST_DAY)
+	data, _, _ = read_back(tmp_path)
+
+	assert data["latest_monthly_change"] == {
+		"period": "2026-09", "annual_change": 2.5}
+	assert "latest_month" not in data

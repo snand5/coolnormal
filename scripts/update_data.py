@@ -323,9 +323,9 @@ def main(data_directory=DEFAULT_DATA_DIRECTORY, today=None):
 		series_status = status["series"].setdefault(series.name, {})
 		outcomes[series.name] = refresh_and_record(data, series_status,
 							   series, today)
-	latest_month = latest_monthly_change(data)
-	if latest_month is not None:
-		data["latest_month"] = latest_month
+	monthly_change = latest_monthly_change(data)
+	if monthly_change is not None:
+		data["latest_monthly_change"] = monthly_change
 	if not data.get("cpi_quarterly"):
 		sys.exit(NO_DATA_MESSAGE)
 

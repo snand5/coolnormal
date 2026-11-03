@@ -70,7 +70,7 @@ let wpi_by_quarter = {};
 let cpi_quarters = [];
 let latest_quarter = '';
 let latest_wpi_quarter = '';
-let latest_month = null;
+let latest_monthly_change = null;
 let unemployment_by_month = {};
 let underutilisation_by_month = {};
 let labour_months = [];
@@ -286,7 +286,7 @@ function load_data(data)
 	cpi_quarters = Object.keys(cpi_by_quarter).sort();
 	latest_quarter = cpi_quarters[cpi_quarters.length - 1];
 	latest_wpi_quarter = Object.keys(wpi_by_quarter).sort().pop() || '';
-	latest_month = data.latest_month || null;
+	latest_monthly_change = data.latest_monthly_change || null;
 	unemployment_by_month = contiguous(
 		series_by_period(data.unemployment_rate || []),
 		month_position, 'unemployment_rate');
@@ -436,13 +436,14 @@ function wage_comparison_available()
 
 function monthly_reading_is_current()
 {
-	return latest_month !== null &&
-	       latest_month.period >= last_month_of_quarter(latest_quarter);
+	return latest_monthly_change !== null &&
+	       latest_monthly_change.period >=
+	       last_month_of_quarter(latest_quarter);
 }
 
 function show_monthly_headline_inflation()
 {
-	const reading = latest_month;
+	const reading = latest_monthly_change;
 
 	element_by_id('headline-inflation-label').textContent =
 		'Headline inflation, year to ' +

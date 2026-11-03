@@ -214,9 +214,9 @@ test('the monthly reading is used only once it covers the quarter', () => {
 	const september = { period: '1994-09', annual_change: 2.4 };
 	const august = { period: '1994-08', annual_change: 2.4 };
 
-	load([0, 0, 0, 0, 0], { latest_month: september });
+	load([0, 0, 0, 0, 0], { latest_monthly_change: september });
 	assert.equal(app.monthly_reading_is_current(), true);
-	load([0, 0, 0, 0, 0], { latest_month: august });
+	load([0, 0, 0, 0, 0], { latest_monthly_change: august });
 	assert.equal(app.monthly_reading_is_current(), false);
 	load([0, 0, 0, 0, 0]);
 	assert.equal(app.monthly_reading_is_current(), false);
