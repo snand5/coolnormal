@@ -65,7 +65,8 @@ class PriceLevel:
 
 		while earlier:
 			first = earlier
-			earlier = self.earlier_quarter_in_run(first, run_is_above)
+			earlier = self.earlier_quarter_in_run(first,
+							      run_is_above)
 		length = position(self.latest) - position(first) + 1
 		return run_is_above, first, length
 
@@ -85,8 +86,10 @@ class PriceLevel:
 		rates = [step / 100 for step in hundredths]
 
 		if self.above(self.latest):
-			return [rate for rate in rates if rate < self.trend_rate]
-		return [rate for rate in rates if rate > self.trend_rate]
+			return [rate for rate in rates
+				if rate < self.trend_rate]
+		return [rate for rate in rates
+			if rate > self.trend_rate]
 
 	def years_back_to_trend(self, rate):
 		closing = (1 + self.trend_rate / 100) / (1 + rate / 100)
