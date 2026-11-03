@@ -414,14 +414,24 @@ function current_run()
 	};
 }
 
+function later_of_quarters(quarter, other_quarter)
+{
+	return quarter > other_quarter ? quarter : other_quarter;
+}
+
+function earlier_of_quarters(quarter, other_quarter)
+{
+	return quarter < other_quarter ? quarter : other_quarter;
+}
+
 function wage_comparison_window()
 {
 	const wage_quarters = at_least_one(Object.keys(wpi_by_quarter).sort(),
 					   'Wage Price Index observation');
 	const run_start = current_run().first_quarter;
-	const first_quarter = run_start > wage_quarters[0] ?
-			      run_start : wage_quarters[0];
-	const last_quarter = [latest_quarter, latest_wpi_quarter].sort()[0];
+	const first_quarter = later_of_quarters(run_start, wage_quarters[0]);
+	const last_quarter = earlier_of_quarters(latest_quarter,
+						 latest_wpi_quarter);
 
 	return { first_quarter: first_quarter, last_quarter: last_quarter };
 }
