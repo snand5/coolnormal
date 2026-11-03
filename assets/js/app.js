@@ -1306,7 +1306,7 @@ function draw_labour_section()
 	const is_hidden = !labour_data_available();
 
 	section.hidden = is_hidden;
-	section.previousElementSibling.hidden = is_hidden;
+	element_by_id('labour-chart-title').hidden = is_hidden;
 	if (labour_data_available())
 		draw_labour_chart();
 }
