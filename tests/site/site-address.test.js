@@ -46,3 +46,10 @@ test('robots.txt and sitemap.xml name the site address', () => {
 test('the code licence names coolnormal.com as the holder', () => {
 	assert.match(read('LICENSE'), COPYRIGHT_LINE);
 });
+
+test('the footer links to the source code on GitHub', () => {
+	const repository = '<a href="https://github.com/snand5/coolnormal">' +
+			   'source on GitHub</a>';
+
+	assert.ok(read('index.html').includes(repository));
+});
