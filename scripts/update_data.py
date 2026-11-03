@@ -35,26 +35,27 @@ PERIOD_FORMS = {
 }
 
 Series = collections.namedtuple(
-	"Series", "name key first_period fewest_observations is_index")
+	"Series",
+	"name key first_period fewest_observations_after_merge is_index")
 
 SERIES = [
 	Series(name="cpi_quarterly", key="ABS,CPI,2.0.0/1.10001.10.50.Q",
-	       first_period="1985-Q1", fewest_observations=160,
+	       first_period="1985-Q1", fewest_observations_after_merge=160,
 	       is_index=True),
 	Series(name="wpi_quarterly",
 	       key="ABS,WPI,1.2.0/1.THRPEB.7.TOT.20.AUS.Q",
-	       first_period="1997-Q3", fewest_observations=110,
+	       first_period="1997-Q3", fewest_observations_after_merge=110,
 	       is_index=True),
 	Series(name="cpi_monthly", key="ABS,CPI,2.0.0/1.10001.10.50.M",
-	       first_period="2024-01", fewest_observations=12,
+	       first_period="2024-01", fewest_observations_after_merge=12,
 	       is_index=True),
 	Series(name="unemployment_rate",
 	       key="ABS,LF,1.0.0/M13.3.1599.20.AUS.M",
-	       first_period="1978-02", fewest_observations=500,
+	       first_period="1978-02", fewest_observations_after_merge=500,
 	       is_index=False),
 	Series(name="underutilisation_rate",
 	       key="ABS,LF_UNDER,1.0.1/M24.3.1599.20.AUS.M",
-	       first_period="1978-02", fewest_observations=500,
+	       first_period="1978-02", fewest_observations_after_merge=500,
 	       is_index=False),
 ]
 
@@ -199,7 +200,7 @@ def periods_missing(series, merged):
 
 
 def check_merged(series, merged):
-	if len(merged) < series.fewest_observations:
+	if len(merged) < series.fewest_observations_after_merge:
 		raise SeriesLooksWrong(f"only {len(merged)} observations after "
 				       f"merging with the cache")
 	missing = periods_missing(series, merged)

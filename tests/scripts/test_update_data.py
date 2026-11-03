@@ -367,7 +367,7 @@ def test_too_few_observations_after_merging_is_rejected(abs_api,
 							 tmp_path,
 							 monkeypatch):
 	stricter_rates = SMALL_SERIES[1]._replace(
-		fewest_observations=FEWEST_OBSERVATIONS + 1)
+		fewest_observations_after_merge=FEWEST_OBSERVATIONS + 1)
 
 	monkeypatch.setattr(update_data, "SERIES",
 			    [SMALL_SERIES[0], stricter_rates])
