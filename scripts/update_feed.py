@@ -88,9 +88,9 @@ def fetch_feed(address, last_modified):
 	try:
 		return read_reply(request)
 	except urllib.error.HTTPError as error:
-		if error.code != NOT_MODIFIED:
-			raise
-		return None, last_modified
+		if error.code == NOT_MODIFIED:
+			return None, last_modified
+		raise
 
 
 def refresh_feed(address, feed):
