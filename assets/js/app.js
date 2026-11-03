@@ -1367,17 +1367,20 @@ function feed_entry_item(entry)
 	return item;
 }
 
+function fill_feed(entries)
+{
+	element_by_id('rba-feed-entries').replaceChildren(
+		...entries.map(feed_entry_item));
+	element_by_id('rba-feed-source').textContent = feed_credit(entries);
+}
+
 function show_feed(feeds_file)
 {
 	const entries = feed_entries_shown(feeds_file);
 
-	if (entries.length === 0)
-		return;
-	element_by_id('rba-feed-entries').replaceChildren(
-		...entries.map(feed_entry_item));
-	element_by_id('rba-feed-source').textContent =
-		feed_credit(entries);
-	element_by_id('rba-feed').hidden = false;
+	element_by_id('rba-feed').hidden = entries.length === 0;
+	if (entries.length > 0)
+		fill_feed(entries);
 }
 
 function hide_feed()
