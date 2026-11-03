@@ -1028,10 +1028,11 @@ function describe_wage_chart()
 function describe_labour_chart()
 {
 	const latest = labour_months[labour_months.length - 1];
+	const opening =
+		'Monthly unemployment and underutilisation rates, seasonally adjusted, with months when prices were above the ';
 
-	return 'Monthly unemployment and underutilisation rates, ' +
-	       'seasonally adjusted, with months when prices were above the ' +
-	       trend_rate + '% trend shaded. In ' + month_long_name(latest) +
+	return opening + trend_rate + '% trend shaded. In ' +
+	       month_long_name(latest) +
 	       ': unemployment rate ' +
 	       unemployment_by_month[latest].toFixed(1) +
 	       ' per cent, underutilisation rate ' +

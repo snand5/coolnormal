@@ -72,9 +72,7 @@ def only_one_value_per_period(rows):
 	if repeated:
 		first_repeated_period = min(repeated)
 		count = repeated[first_repeated_period]
-		raise SeriesLooksWrong(f"{count} values for "
-				       f"{first_repeated_period}: the key "
-				       f"matched more than one series")
+		raise SeriesLooksWrong(f"{count} values for {first_repeated_period}: the key matched more than one series")
 	return {row["TIME_PERIOD"]: float(row["OBS_VALUE"]) for row in rows}
 
 
@@ -86,11 +84,9 @@ def check_observation(row, period_form):
 	period = row["TIME_PERIOD"]
 
 	if not period_form.fullmatch(period):
-		raise SeriesLooksWrong(f"period {period!r} is not in the form "
-				       f"{period_form.pattern}")
+		raise SeriesLooksWrong(f"period {period!r} is not in the form {period_form.pattern}")
 	if not math.isfinite(float(row["OBS_VALUE"])):
-		raise SeriesLooksWrong(f"value {row['OBS_VALUE']!r} for "
-				       f"{period} is not a finite number")
+		raise SeriesLooksWrong(f"value {row['OBS_VALUE']!r} for {period} is not a finite number")
 
 
 def parse_abs_reply(reply_text, series):
@@ -150,19 +146,14 @@ def check_index_history(cached, fetched):
 	spread = largest_ratio_spread(cached, fetched)
 
 	if spread > LARGEST_RATIO_SPREAD_FROM_MEDIAN:
-		raise SeriesLooksWrong(f"past values moved by up to "
-				       f"{spread:.2%} against the median "
-				       f"ratio; the key may now point at a "
-				       f"different series")
+		raise SeriesLooksWrong(f"past values moved by up to {spread:.2%} against the median ratio; the key may now point at a different series")
 
 
 def check_rate_history(cached, fetched):
 	revision = typical_rate_revision(cached, fetched)
 
 	if revision > LARGEST_TYPICAL_RATE_REVISION_IN_POINTS:
-		raise SeriesLooksWrong(f"past rates moved by a median of "
-				       f"{revision:.2f} points; the key may "
-				       f"now point at a different series")
+		raise SeriesLooksWrong(f"past rates moved by a median of {revision:.2f} points; the key may now point at a different series")
 
 
 def merge_with_cache(cached, fetched, is_index):
@@ -179,11 +170,9 @@ def merge_with_cache(cached, fetched, is_index):
 
 def check_fetched(cached, fetched):
 	if len(fetched) < FEWEST_OBSERVATIONS_IN_A_WORKING_RESPONSE:
-		raise SeriesLooksWrong(f"only {len(fetched)} observations "
-				       f"returned")
+		raise SeriesLooksWrong(f"only {len(fetched)} observations returned")
 	if cached and max(fetched) < max(cached):
-		raise SeriesLooksWrong(f"latest period {max(fetched)} is older "
-				       f"than cached {max(cached)}")
+		raise SeriesLooksWrong(f"latest period {max(fetched)} is older than cached {max(cached)}")
 
 
 def period_position(period, periods_per_year):
@@ -203,12 +192,10 @@ def check_merged(series, merged):
 	periods_per_year = PERIODS_PER_YEAR[frequency(series)]
 
 	if len(merged) < series.fewest_observations_after_merge:
-		raise SeriesLooksWrong(f"only {len(merged)} observations after "
-				       f"merging with the cache")
+		raise SeriesLooksWrong(f"only {len(merged)} observations after merging with the cache")
 	missing = periods_missing(merged, periods_per_year)
 	if missing:
-		raise SeriesLooksWrong(f"{missing} periods missing between "
-				       f"{min(merged)} and {max(merged)}")
+		raise SeriesLooksWrong(f"{missing} periods missing between {min(merged)} and {max(merged)}")
 
 
 def observations(series_values):

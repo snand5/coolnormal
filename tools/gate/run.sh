@@ -171,8 +171,7 @@ check_circuit_breaker()
 		wc -l)
 	if [ "$lines" -eq "$IDENTICAL_FAILURES_BEFORE_STOPPING" ] &&
 		[ "$identical" -eq 1 ]; then
-		echo "CIRCUIT BREAKER: the last $lines runs failed the same" \
-			"stages ($failures). Stop gating and investigate."
+		echo "CIRCUIT BREAKER: the last $lines runs failed the same stages ($failures). Stop gating and investigate."
 	fi
 }
 
@@ -213,9 +212,7 @@ check_circuit_breaker
 verdict=PASSED
 [ -n "$failures" ] && verdict=FAILED
 echo
-echo "$(date '+%Y-%m-%d %H:%M %Z') | $commit | Linux, Node $(node --version)," \
-	"Python $(python3 --version | cut -d' ' -f2), Chromium headless shell" \
-	"(Playwright 1.62.1) | tools/gate/run.sh $commit (gate scripts" \
-	"$gate_commit) | VERDICT $verdict;$counts not run:${not_run:- none};" \
-	"failed:${failures:- none}; log $gate_log" | tee -a "$gate_log"
+platform="Linux, Node $(node --version), Python $(python3 --version | cut -d' ' -f2), Chromium headless shell (Playwright 1.62.1)"
+echo "$(date '+%Y-%m-%d %H:%M %Z') | $commit | $platform | tools/gate/run.sh $commit (gate scripts $gate_commit) | VERDICT $verdict;$counts not run:${not_run:- none}; failed:${failures:- none}; log $gate_log" |
+	tee -a "$gate_log"
 [ "$verdict" = PASSED ]

@@ -7,8 +7,8 @@ const fixture = require('./fixtures/data-2026-10-29.json');
 const expected = require('./expected-2026-10-29.json');
 
 const DATA_ADDRESS = 'data/data.json';
-const AGREED_MESSAGE = 'Showing the built-in copy of the data, to the ' +
-	'September quarter 2026; live data unavailable. ';
+const AGREED_MESSAGE =
+	'Showing the built-in copy of the data, to the September quarter 2026; live data unavailable. ';
 const HEADLINE = expected.trends[0];
 
 function serve_nothing(addresses)
