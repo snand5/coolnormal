@@ -440,22 +440,34 @@ function monthly_reading_is_current()
 	       latest_month.period >= last_month_of_quarter(latest_quarter);
 }
 
+function show_monthly_headline_inflation()
+{
+	const reading = latest_month;
+
+	element_by_id('headline-inflation-label').textContent =
+		'Headline inflation, year to ' +
+		month_long_name(reading.period) + ' (monthly CPI)';
+	element_by_id('headline-inflation-value').textContent =
+		format_number(reading.annual_change, 1) + '%';
+}
+
+function show_quarterly_headline_inflation()
+{
+	const year_ended_change = annual_change(cpi_by_quarter, latest_quarter);
+
+	element_by_id('headline-inflation-label').textContent =
+		'Headline inflation, year to the ' +
+		quarter_long_name(latest_quarter);
+	element_by_id('headline-inflation-value').textContent =
+		format_number(year_ended_change, 1) + '%';
+}
+
 function show_headline_inflation()
 {
-	const label = element_by_id('headline-inflation-label');
-	const value = element_by_id('headline-inflation-value');
-	const quarterly = annual_change(cpi_by_quarter, latest_quarter);
-
-	if (monthly_reading_is_current()) {
-		label.textContent = 'Headline inflation, year to ' +
-			month_long_name(latest_month.period) + ' (monthly CPI)';
-		value.textContent =
-			format_number(latest_month.annual_change, 1) + '%';
-	} else {
-		label.textContent = 'Headline inflation, year to the ' +
-			quarter_long_name(latest_quarter);
-		value.textContent = format_number(quarterly, 1) + '%';
-	}
+	if (monthly_reading_is_current())
+		show_monthly_headline_inflation();
+	else
+		show_quarterly_headline_inflation();
 }
 
 function show_titles()
