@@ -282,3 +282,10 @@ test('months and quarters shift the same way: positive is later', () => {
 	assert.equal(app.month_shifted_by_years('2026-09', -10), '2016-09');
 	assert.equal(app.month_shifted_by_years('2016-09', 10), '2026-09');
 });
+
+test('axis ticks use the same minus sign as the figures', () => {
+	assert.equal(app.signed_percent_tick(-5), '−5%');
+	assert.equal(app.signed_percent_tick(5), '+5%');
+	assert.equal(app.signed_percent_tick(0), '0%');
+	assert.equal(app.signed_percent_tick(-2.5), '−2.5%');
+});

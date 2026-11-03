@@ -449,11 +449,12 @@ function show_headline_inflation()
 	if (monthly_reading_is_current()) {
 		label.textContent = 'Headline inflation, year to ' +
 			month_long_name(latest_month.period) + ' (monthly CPI)';
-		value.textContent = latest_month.annual_change.toFixed(1) + '%';
+		value.textContent =
+			format_number(latest_month.annual_change, 1) + '%';
 	} else {
 		label.textContent = 'Headline inflation, year to the ' +
 			quarter_long_name(latest_quarter);
-		value.textContent = quarterly.toFixed(1) + '%';
+		value.textContent = format_number(quarterly, 1) + '%';
 	}
 }
 
@@ -495,7 +496,7 @@ function show_gap_figures()
 		'Average inflation, September quarter 1993 to ' +
 		quarter_long_name(latest_quarter);
 	element_by_id('average-inflation-value').textContent =
-		average_inflation.toFixed(1) + '% a year';
+		format_number(average_inflation, 1) + '% a year';
 }
 
 function show_wage_comparison()
@@ -543,11 +544,11 @@ function recent_quarter_row(quarter)
 	const price_change = annual_change(cpi_by_quarter, quarter);
 	const wage_change = annual_change(wpi_by_quarter, quarter);
 	const wage_text = wage_change === null ?
-			  '\u2014' : wage_change.toFixed(1);
+			  '\u2014' : format_number(wage_change, 1);
 	const gap_text = format_signed_number(percent_above_trend(quarter), 1);
 
 	row.appendChild(text_cell(quarter_short_name(quarter)));
-	row.appendChild(number_cell(price_change.toFixed(1)));
+	row.appendChild(number_cell(format_number(price_change, 1)));
 	row.appendChild(number_cell(wage_text));
 	row.appendChild(number_cell(gap_text));
 	return row;
@@ -698,7 +699,13 @@ function chart_options(y_axis_title, format_tick, describe_point,
 
 function signed_percent_tick(value)
 {
-	return (value > 0 ? '+' : '') + value + '%';
+	const magnitude = Math.abs(value) + '%';
+
+	if (value < 0)
+		return '\u2212' + magnitude;
+	if (value > 0)
+		return '+' + magnitude;
+	return magnitude;
 }
 
 function plain_tick(value)
@@ -1629,6 +1636,7 @@ function calculations()
 {
 	return {
 		quarter_shifted_by: quarter_shifted_by,
+		signed_percent_tick: signed_percent_tick,
 		month_shifted_by_years: month_shifted_by_years,
 		quarter_long_name: quarter_long_name,
 		quarter_short_name: quarter_short_name,
