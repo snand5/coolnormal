@@ -90,19 +90,27 @@ function measure_page({ non_text_roles, wcag, channel_maximum })
 			(darker + wcag.ratio_offset);
 	}
 
-	function background_of(element)
+	function background_colours(element)
 	{
-		const layers = [];
+		const colours = [];
 
 		for (let node = element; node; node = node.parentElement) {
-			const colour = channels(
-				getComputedStyle(node).backgroundColor);
+			const style = getComputedStyle(node);
 
-			if (colour.alpha > 0)
-				layers.push(colour);
-			if (colour.alpha === 1)
-				break;
+			colours.push(channels(style.backgroundColor));
 		}
+		return colours;
+	}
+
+	function background_of(element)
+	{
+		const colours = background_colours(element);
+		const first_opaque =
+			colours.findIndex(colour => colour.alpha === 1);
+		const covering = first_opaque === -1 ?
+				 colours : colours.slice(0, first_opaque + 1);
+		const layers = covering.filter(colour => colour.alpha > 0);
+
 		return layers.reduceRight((below, layer) => over(layer, below),
 			{ red: channel_maximum, green: channel_maximum,
 			  blue: channel_maximum, alpha: 1 });
