@@ -20,11 +20,18 @@ work_directory=$GATE_ROOT/$commit-$(date +%Y%m%d-%H%M%S)
 source_directory=$work_directory/src
 gate_log=$work_directory/gate.log
 javascript_results=$work_directory/javascript-tests.tap
-lock_and_requirements=$(cat "$gate_directory/package-lock.json" \
-	"$gate_directory/requirements.txt" | sha256sum | cut -c1-12)
+gate_package=$gate_directory/package.json
+gate_lock=$gate_directory/package-lock.json
+gate_requirements=$gate_directory/requirements.txt
+html_rules=$gate_directory/htmlvalidate.json
+smoke_script=$gate_directory/smoke.js
+lock_and_requirements=$(cat "$gate_lock" "$gate_requirements" | sha256sum |
+	cut -c1-12)
 tools_directory=$GATE_ROOT/tools-$lock_and_requirements
 venv_python=$tools_directory/venv/bin/python
 gate_node_modules=$tools_directory/node_modules
+eslint_program=$gate_node_modules/eslint/bin/eslint.js
+html_validator=$gate_node_modules/html-validate/bin/html-validate.mjs
 failures=""
 not_run=""
 counts=""
@@ -58,13 +65,11 @@ install_tools()
 		return 0
 	fi
 	mkdir -p "$tools_directory"
-	cp "$gate_directory/package.json" "$gate_directory/package-lock.json" \
-		"$tools_directory/"
+	cp "$gate_package" "$gate_lock" "$tools_directory/"
 	(cd "$tools_directory" &&
 		npm ci --ignore-scripts --no-audit --no-fund) &&
 		python3 -m venv "$tools_directory/venv" &&
-		"$venv_python" -m pip install -q \
-			-r "$gate_directory/requirements.txt"
+		"$venv_python" -m pip install -q -r "$gate_requirements"
 }
 
 toolchain_matches()
@@ -78,11 +83,11 @@ pins_match()
 {
 	commit_eslint=$(node -p "require('$source_directory/package.json')
 		.devDependencies.eslint")
-	gate_eslint=$(node -p "require('$gate_directory/package.json')
+	gate_eslint=$(node -p "require('$gate_package')
 		.devDependencies.eslint")
 	echo "eslint: commit $commit_eslint, gate $gate_eslint"
 	commit_python=$(sort "$source_directory/requirements-dev.txt")
-	gate_python=$(sort "$gate_directory/requirements.txt")
+	gate_python=$(sort "$gate_requirements")
 	echo "python: commit $commit_python; gate $gate_python"
 	[ "$commit_eslint" = "$gate_eslint" ] &&
 		[ "$commit_python" = "$gate_python" ]
@@ -90,27 +95,31 @@ pins_match()
 
 lint_javascript()
 {
-	(cd "$source_directory" && NODE_PATH="$gate_node_modules" \
-		node "$gate_node_modules/eslint/bin/eslint.js" .)
+	(cd "$source_directory" &&
+		NODE_PATH="$gate_node_modules" node "$eslint_program" .)
 }
 
 lint_python()
 {
-	(cd "$source_directory" && "$venv_python" -m pyflakes $(ls -d \
-		scripts tests tools 2>/dev/null))
+	(
+		cd "$source_directory" || exit
+		python_folders=$(ls -d scripts tests tools 2>/dev/null)
+		"$venv_python" -m pyflakes $python_folders
+	)
 }
 
 validate_html()
 {
-	(cd "$source_directory" && node \
-		"$gate_node_modules/html-validate/bin/html-validate.mjs" \
-		--config "$gate_directory/htmlvalidate.json" index.html)
+	(cd "$source_directory" &&
+		node "$html_validator" --config "$html_rules" index.html)
 }
 
 javascript_tests()
 {
-	(cd "$source_directory" && node --test --test-reporter=tap \
-		"tests/**/*.test.js") >"$javascript_results" 2>&1
+	(
+		cd "$source_directory" || exit
+		node --test --test-reporter=tap "tests/**/*.test.js"
+	) >"$javascript_results" 2>&1
 	result=$?
 	cat "$javascript_results"
 	passed=$(sed -n 's/^# pass //p' "$javascript_results")
@@ -124,9 +133,11 @@ javascript_tests()
 
 python_tests()
 {
-	(cd "$source_directory" && PYTHONDONTWRITEBYTECODE=1 "$venv_python" \
-		-m pytest -q -rs -p no:cacheprovider tests) \
-		>"$work_directory/python-tests.txt" 2>&1
+	(
+		cd "$source_directory" || exit
+		export PYTHONDONTWRITEBYTECODE=1
+		"$venv_python" -m pytest -q -rs -p no:cacheprovider tests
+	) >"$work_directory/python-tests.txt" 2>&1
 	result=$?
 	cat "$work_directory/python-tests.txt"
 	summary=$(tail -n 1 "$work_directory/python-tests.txt")
@@ -145,16 +156,20 @@ print(s.getsockname()[1])'
 browser_smoke()
 {
 	port=$(free_port)
-	(cd "$source_directory" &&
-		exec python3 -m http.server --bind 127.0.0.1 "$port") \
-		>"$work_directory/server.log" 2>&1 &
+	(
+		cd "$source_directory" || exit
+		exec python3 -m http.server --bind 127.0.0.1 "$port"
+	) >"$work_directory/server.log" 2>&1 &
 	server=$!
+	page_address=http://127.0.0.1:$port/
+	screenshot_directory=$work_directory/screenshots
 	sleep 1
-	mkdir -p "$work_directory/screenshots"
-	NODE_PATH="$gate_node_modules" flock -w \
-		"$SECONDS_TO_WAIT_FOR_BROWSER_LOCK" "$BROWSER_LOCK" \
-		node "$gate_directory/smoke.js" "http://127.0.0.1:$port/" \
-		"$work_directory/screenshots"
+	mkdir -p "$screenshot_directory"
+	(
+		flock -w "$SECONDS_TO_WAIT_FOR_BROWSER_LOCK" 9 || exit
+		export NODE_PATH="$gate_node_modules"
+		node "$smoke_script" "$page_address" "$screenshot_directory"
+	) 9>"$BROWSER_LOCK"
 	result=$?
 	kill "$server"
 	return "$result"

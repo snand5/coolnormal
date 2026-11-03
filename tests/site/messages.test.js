@@ -24,3 +24,7 @@ test('user-visible messages are never split across lines', () => {
 	for (const [file, split] of checks)
 		assert.doesNotMatch(read(file), split, file);
 });
+
+test('shell scripts use no backslash line continuations', () => {
+	assert.doesNotMatch(read('tools/gate/run.sh'), /\\\n/);
+});
