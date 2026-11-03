@@ -1572,6 +1572,16 @@ function export_png(button)
 	image.toBlob(png => save_file(file_name, png), 'image/png');
 }
 
+function csv_header()
+{
+	const trend_column = 'vs_' + String(trend_rate).replace('.', '_') +
+			     'pct_trend_pct';
+
+	return ['quarter', 'cpi_index', 'price_level_index',
+		'cpi_year_ended_pct', trend_column, 'wpi_index',
+		'wpi_year_ended_pct'];
+}
+
 function csv_row(quarter)
 {
 	const price_change = annual_change(cpi_by_quarter, quarter);
@@ -1581,6 +1591,7 @@ function csv_row(quarter)
 	return [
 		quarter,
 		cpi_by_quarter[quarter],
+		price_level(quarter).toFixed(4),
 		price_change === null ? '' : price_change.toFixed(3),
 		since_trend_base ? percent_above_trend(quarter).toFixed(3) : '',
 		wpi_by_quarter[quarter] ?? '',
@@ -1590,11 +1601,7 @@ function csv_row(quarter)
 
 function export_csv()
 {
-	const trend_column = 'vs_' + String(trend_rate).replace('.', '_') +
-			     'pct_trend_pct';
-	const header = ['quarter', 'cpi_index', 'cpi_year_ended_pct',
-			trend_column, 'wpi_index', 'wpi_year_ended_pct'];
-	const rows = [header].concat(cpi_quarters.map(csv_row));
+	const rows = [csv_header()].concat(cpi_quarters.map(csv_row));
 	const text = rows.map(row => row.join(',')).join('\n');
 	const file_name = 'price-level-vs-' + trend_rate + 'pct-trend-' +
 			  latest_quarter + '.csv';
@@ -1843,6 +1850,8 @@ function functions_for_tests()
 		labour_table_rows: labour_table_rows,
 		view_summary: view_summary,
 		labour_data_available: labour_data_available,
+		csv_header: csv_header,
+		csv_row: csv_row,
 		feed_entries_shown: feed_entries_shown,
 		feed_credit: feed_credit,
 	};

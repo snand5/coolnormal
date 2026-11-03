@@ -335,3 +335,15 @@ test('data without the adjustment uses the CPI as published', () => {
 
 	assert_close(app.percent_above_trend('1994-Q3'), 0);
 });
+
+test('the CSV gives the adjusted price level beside the CPI', () => {
+	load([0, 0, 0, 0, 0], WITH_ADJUSTMENT);
+	const header = app.csv_header();
+	const row = app.csv_row('1994-Q3');
+	const cpi = row[header.indexOf('cpi_index')];
+	const price_level = row[header.indexOf('price_level_index')];
+
+	assert.equal(header.indexOf('price_level_index'),
+		     header.indexOf('cpi_index') + 1);
+	assert.equal(price_level, (cpi * 1.006).toFixed(4));
+});
