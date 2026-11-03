@@ -378,7 +378,7 @@ function average_inflation_since_trend_base(quarter)
 	return (Math.pow(growth, 1 / years) - 1) * 100;
 }
 
-function quarter_continues_run(quarter, run_is_above)
+function earlier_quarter_in_run(quarter, run_is_above)
 {
 	const previous = quarter_shifted_by(quarter, -1);
 	const one_before_previous = quarter_shifted_by(quarter, -2);
@@ -398,13 +398,13 @@ function current_run()
 {
 	const run_is_above = is_above_trend(latest_quarter);
 	let first_quarter = latest_quarter;
-	let earlier_quarter = quarter_continues_run(first_quarter,
-						    run_is_above);
+	let earlier_quarter = earlier_quarter_in_run(first_quarter,
+						     run_is_above);
 
 	while (earlier_quarter) {
 		first_quarter = earlier_quarter;
-		earlier_quarter = quarter_continues_run(first_quarter,
-							run_is_above);
+		earlier_quarter = earlier_quarter_in_run(first_quarter,
+							 run_is_above);
 	}
 	return {
 		is_above: run_is_above,
