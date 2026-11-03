@@ -182,7 +182,9 @@ check_circuit_breaker()
 {
 	history=$GATE_ROOT/history.log
 	echo "$commit|${failures:- none}" >>"$history"
-	[ -z "$failures" ] && return 0
+	if [ -z "$failures" ]; then
+		return 0
+	fi
 	identical=$(tail -n "$IDENTICAL_FAILURES_BEFORE_STOPPING" "$history" |
 		cut -d'|' -f2 | sort -u | wc -l)
 	lines=$(tail -n "$IDENTICAL_FAILURES_BEFORE_STOPPING" "$history" |
@@ -228,7 +230,9 @@ stage browser-smoke browser_smoke
 check_circuit_breaker
 
 verdict=PASSED
-[ -n "$failures" ] && verdict=FAILED
+if [ -n "$failures" ]; then
+	verdict=FAILED
+fi
 echo
 playwright_version=$(pinned_version "$gate_package" playwright)
 platform="Linux, Node $(node --version), Python $(python3 --version | cut -d' ' -f2), Chromium headless shell (Playwright $playwright_version)"
