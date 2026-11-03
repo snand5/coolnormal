@@ -188,6 +188,7 @@ def check_fetched(cached, fetched):
 
 def period_position(period, periods_per_year):
 	year, number = period.split("-")
+
 	return int(year) * periods_per_year + int(number.removeprefix("Q")) - 1
 
 
