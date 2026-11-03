@@ -537,7 +537,6 @@ function show_wage_comparison()
 	const change = wages_relative_to_prices(comparison.first_quarter,
 						comparison.last_quarter);
 
-	label.parentElement.hidden = false;
 	label.textContent = 'Real Wage Price Index, ' +
 		quarter_long_name(comparison.first_quarter) + ' to ' +
 		quarter_long_name(comparison.last_quarter);
@@ -547,10 +546,11 @@ function show_wage_comparison()
 
 function show_wage_figure()
 {
-	if (wage_comparison_available())
+	const has_comparison = wage_comparison_available();
+
+	element_by_id('wage-label').parentElement.hidden = !has_comparison;
+	if (has_comparison)
 		show_wage_comparison();
-	else
-		element_by_id('wage-label').parentElement.hidden = true;
 }
 
 function text_cell(text)
@@ -961,7 +961,6 @@ function show_labour_reading()
 	const label = element_by_id('labour-label');
 	const latest = labour_months[labour_months.length - 1];
 
-	label.parentElement.hidden = false;
 	label.textContent = 'Unemployment and underutilisation, ' +
 		month_long_name(latest);
 	element_by_id('labour-value').textContent =
@@ -971,10 +970,11 @@ function show_labour_reading()
 
 function show_labour_figure()
 {
-	if (labour_data_available())
+	const has_data = labour_data_available();
+
+	element_by_id('labour-label').parentElement.hidden = !has_data;
+	if (has_data)
 		show_labour_reading();
-	else
-		element_by_id('labour-label').parentElement.hidden = true;
 }
 
 function describe_gap_chart()
