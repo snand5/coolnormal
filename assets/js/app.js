@@ -55,6 +55,9 @@ const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
 const LOAD_FAILURE_MESSAGE =
 	'Data could not be loaded. Reload the page or download the JSON. ';
 const DOWNLOAD_FAILURE_MESSAGE = 'Download failed. ';
+const FEED_FILE = 'data/rba-feeds.json';
+const FEED_ENTRIES_SHOWN = 5;
+const FEED_LINK_PREFIX = 'https://www.rba.gov.au/';
 const SERIES_DESCRIPTIONS = {
 	cpi_quarterly: 'quarterly CPI',
 	wpi_quarterly: 'Wage Price Index',
@@ -1322,6 +1325,63 @@ function show_freshness(status)
 		freshness.textContent = 'Update status unreadable.';
 }
 
+function is_shown_entry(entry)
+{
+	return typeof entry.title === 'string' && entry.title !== '' &&
+	       typeof entry.date === 'string' &&
+	       typeof entry.link === 'string' &&
+	       entry.link.startsWith(FEED_LINK_PREFIX);
+}
+
+function newest_first_by_date(entry, other_entry)
+{
+	return other_entry.date.localeCompare(entry.date);
+}
+
+function feed_entries_shown(feeds_file)
+{
+	const feeds = Object.values(feeds_file.feeds || {});
+	const entries = feeds.flatMap(feed => feed.entries || []);
+
+	return entries.filter(is_shown_entry)
+		.sort(newest_first_by_date)
+		.slice(0, FEED_ENTRIES_SHOWN);
+}
+
+function feed_source_text(entries)
+{
+	return 'Source: RBA ' + entries[0].date.slice(0, 4) + '.';
+}
+
+function feed_entry_item(entry)
+{
+	const item = document.createElement('li');
+	const link = document.createElement('a');
+
+	link.setAttribute('href', entry.link);
+	link.textContent = entry.title;
+	item.append(link, ', ' + australian_date(entry.date));
+	return item;
+}
+
+function show_feed(feeds_file)
+{
+	const entries = feed_entries_shown(feeds_file);
+
+	if (entries.length === 0)
+		return;
+	element_by_id('rba-feed-entries').replaceChildren(
+		...entries.map(feed_entry_item));
+	element_by_id('rba-feed-source').textContent =
+		feed_source_text(entries);
+	element_by_id('rba-feed').hidden = false;
+}
+
+function hide_feed()
+{
+	element_by_id('rba-feed').hidden = true;
+}
+
 function report_missing_status()
 {
 	element_by_id('freshness').textContent = 'Update status unavailable.';
@@ -1677,6 +1737,9 @@ function start()
 	load_site_data()
 		.then(show_site)
 		.catch(show_load_error);
+	fetch_json(FEED_FILE)
+		.then(show_feed)
+		.catch(hide_feed);
 }
 
 function functions_for_tests()
@@ -1730,6 +1793,8 @@ function functions_for_tests()
 		labour_table_rows: labour_table_rows,
 		view_summary: view_summary,
 		labour_data_available: labour_data_available,
+		feed_entries_shown: feed_entries_shown,
+		feed_source_text: feed_source_text,
 	};
 }
 

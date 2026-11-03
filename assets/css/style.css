@@ -341,6 +341,27 @@ a:hover {
 	border-bottom: 1px solid var(--border);
 }
 
+.sidebar + .sidebar {
+	margin-top: 16px;
+}
+
+.feed-entries {
+	margin: 0;
+	padding: 8px 12px 0 30px;
+	font-size: .8125rem;
+}
+
+.feed-entries li + li {
+	margin-top: 4px;
+}
+
+.feed-source {
+	margin: 0;
+	padding: 6px 12px 8px;
+	font-size: .75rem;
+	color: var(--muted-text);
+}
+
 table {
 	border-collapse: collapse;
 	width: 100%;
