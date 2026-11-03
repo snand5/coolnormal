@@ -40,9 +40,10 @@ def entry_from_item(item):
 
 	if not (title and link and date):
 		raise FeedLooksWrong("an item has no title, link or date")
-	if not link.strip().startswith(LINK_PREFIX):
+	link = link.strip()
+	if not link.startswith(LINK_PREFIX):
 		raise FeedLooksWrong(f"link {link!r} is not on {LINK_PREFIX}")
-	return {"title": title.strip(), "link": link.strip(), "date": date[:10]}
+	return {"title": title.strip(), "link": link, "date": date[:10]}
 
 
 def latest_entry(feed_text):
