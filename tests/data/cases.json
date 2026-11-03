@@ -1,0 +1,87 @@
+{
+	"tolerance": 1e-9,
+	"runs": [
+		{
+			"rule": "F-2: the base quarter (gap 0) counts as above",
+			"trend_rate": 2.5,
+			"percent_gaps": [0, 1, 2],
+			"is_above": true,
+			"run_first_step": 0,
+			"run_length_in_quarters": 3
+		},
+		{
+			"rule": "F-3: one quarter on the other side is skipped; two end the run",
+			"trend_rate": 2.5,
+			"percent_gaps": [0, -1, -1, 1, -1, 1, 1],
+			"is_above": true,
+			"run_first_step": 3,
+			"run_length_in_quarters": 4
+		},
+		{
+			"rule": "F-3: two quarters on the other side end the run",
+			"trend_rate": 2.5,
+			"percent_gaps": [0, 1, -1, -1, 1, 1],
+			"is_above": true,
+			"run_first_step": 4,
+			"run_length_in_quarters": 2
+		},
+		{
+			"rule": "F-3: below-trend runs follow the same rule",
+			"trend_rate": 2.5,
+			"percent_gaps": [0, -1, -1, 1, -1],
+			"is_above": false,
+			"run_first_step": 1,
+			"run_length_in_quarters": 4
+		},
+		{
+			"rule": "F-3: a single latest quarter is a run of one",
+			"trend_rate": 2.5,
+			"percent_gaps": [0, 1, -1, -1, 1],
+			"is_above": true,
+			"run_first_step": 4,
+			"run_length_in_quarters": 1
+		},
+		{
+			"rule": "F-1: a path at 2.5% a year is above the 2% trend",
+			"trend_rate": 2,
+			"percent_gaps": [0, 0, 0, 0, 0],
+			"is_above": true,
+			"run_first_step": 0,
+			"run_length_in_quarters": 5
+		}
+	],
+	"catch_up": [
+		{
+			"rule": "F-6: above a 2.5% trend, rates 1 to 2.25",
+			"trend_rate": 2.5,
+			"latest_percent_gap": 10,
+			"rates": [1, 1.25, 1.5, 1.75, 2, 2.25],
+			"rate": 1.5,
+			"years": 9.721560472
+		},
+		{
+			"rule": "F-6: below a 2.5% trend, rates 2.75 to 4",
+			"trend_rate": 2.5,
+			"latest_percent_gap": -10,
+			"rates": [2.75, 3, 3.25, 3.5, 3.75, 4],
+			"rate": 3.5,
+			"years": 10.852047869
+		},
+		{
+			"rule": "F-6: above a 2% trend, rates 1 to 1.75",
+			"trend_rate": 2,
+			"latest_percent_gap": 10,
+			"rates": [1, 1.25, 1.5, 1.75],
+			"rate": 1,
+			"years": 9.673904998
+		},
+		{
+			"rule": "F-6: below a 2% trend, rates 2.25 to 4",
+			"trend_rate": 2,
+			"latest_percent_gap": -10,
+			"rates": [2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4],
+			"rate": 3,
+			"years": 10.799367195
+		}
+	]
+}

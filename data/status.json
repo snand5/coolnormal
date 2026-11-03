@@ -1,0 +1,45 @@
+{
+	"checked": "2026-10-29",
+	"series": {
+		"cpi_quarterly": {
+			"last_success": "2026-10-29",
+			"latest": "2026-Q3",
+			"error": null,
+			"failing_since": null,
+			"note": null,
+			"outcome": "unchanged"
+		},
+		"wpi_quarterly": {
+			"last_success": "2026-10-29",
+			"latest": "2026-Q2",
+			"error": null,
+			"failing_since": null,
+			"note": null,
+			"outcome": "unchanged"
+		},
+		"cpi_monthly": {
+			"last_success": "2026-10-29",
+			"latest": "2026-09",
+			"error": null,
+			"failing_since": null,
+			"note": null,
+			"outcome": "unchanged"
+		},
+		"unemployment_rate": {
+			"outcome": "updated",
+			"last_success": "2026-10-29",
+			"latest": "2026-09",
+			"error": null,
+			"failing_since": null,
+			"note": null
+		},
+		"underutilisation_rate": {
+			"outcome": "updated",
+			"last_success": "2026-10-29",
+			"latest": "2026-09",
+			"error": null,
+			"failing_since": null,
+			"note": null
+		}
+	}
+}

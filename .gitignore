@@ -1,0 +1,37 @@
+# Files this project's tools generate. Editor and operating-system files
+# (.DS_Store, .vscode/, *.swp) belong in your global ignore file,
+# ~/.config/git/ignore, not here.
+
+# Dependencies
+node_modules/
+.venv/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Lint, test and coverage output
+.eslintcache
+coverage/
+*.lcov
+test-results/
+playwright-report/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Local scratch output
+/scratch/
+/gate-out/
+
+# Documents are kept locally, not in the repository; README.md is the one
+# tracked document.
+/docs/
+/STYLE_GUIDE.md

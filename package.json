@@ -1,0 +1,19 @@
+{
+	"name": "price-level-site",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Australian price level vs 2.5% trend: development tooling only; the page itself loads nothing from npm.",
+	"license": "MIT",
+	"scripts": {
+		"lint": "eslint assets/js tests",
+		"lint:python": ".venv/bin/python -m pyflakes scripts tests",
+		"test": "node --test \"tests/**/*.test.js\"",
+		"test:python": ".venv/bin/python -m pytest -q tests"
+	},
+	"devDependencies": {
+		"eslint": "10.13.0"
+	},
+	"engines": {
+		"node": ">=24"
+	}
+}

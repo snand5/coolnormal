@@ -1,0 +1,54 @@
+name: Update data
+on:
+  schedule:
+    - cron: "23 3 * * 4"
+  workflow_dispatch:
+permissions: {}
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      BOT_NAME: github-actions[bot]
+      BOT_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+      FAILURE_MESSAGE: ABS fetch failed; cached data kept, see data/status.json
+    steps:
+      - name: Check out repository (actions/checkout v4.2.2)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Set up Python (actions/setup-python v5.6.0)
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - name: Warn if launch placeholders remain
+        run: |
+          if grep -q "example.com" index.html robots.txt sitemap.xml; then
+            echo "::warning::Replace example.com with the site address"
+          fi
+          if grep -q "Trend contributors" LICENSE; then
+            echo "::warning::Replace the copyright holder in LICENSE"
+          fi
+      - name: Fetch ABS data, keeping cached series if a fetch fails
+        id: fetch
+        continue-on-error: true
+        run: python scripts/update_data.py
+      - name: Commit data and status
+        if: always()
+        run: |
+          git config user.name "$BOT_NAME"
+          git config user.email "$BOT_EMAIL"
+          git add data/data.json data/built-in-data.js data/status.json
+          if git diff --cached --quiet; then
+            echo "No data changes to commit"
+          else
+            git commit -m "Update ABS data"
+            git push
+          fi
+      - name: Flag failed fetches
+        if: steps.fetch.outcome == 'failure'
+        run: |
+          echo "::error::$FAILURE_MESSAGE"
+          exit 1

@@ -1,0 +1,481 @@
+:root {
+	--background: #ffffff;
+	--text: #323232;
+	--muted-text: #666666;
+	--border: #cccccc;
+	--panel: #cce0ee;
+	--top-bar: #003c7a;
+	--top-bar-text: #ffffff;
+	--link: #0066aa;
+	--price: #0066aa;
+	--wages: #753bbd;
+	--unemployment: #b45d00;
+	--underutilisation: #007582;
+	--above-trend: rgba(102, 102, 102, .13);
+	--gridline: #e0e0e0;
+	--reference-line: #666666;
+	--target-range: rgba(0, 102, 170, .14);
+	--button: #ffffff;
+	--button-hover: #5393dc;
+	--button-hover-text: #000000;
+	--button-border: #666666;
+	--button-pressed: #003c7a;
+	--button-pressed-text: #ffffff;
+	--panel-muted-text: #595959;
+	--link-hover: #003c7a;
+	--outside-target-range: #666666;
+	--body-font: Tahoma, Verdana, Geneva, sans-serif;
+	--heading-font: Arial, Helvetica, sans-serif;
+	box-sizing: border-box;
+	padding-top: env(safe-area-inset-top, 0px);
+	padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--background: #000000;
+		--text: #ffffff;
+		--muted-text: #cccccc;
+		--border: #666666;
+		--panel: #323232;
+		--top-bar: #003c7a;
+		--top-bar-text: #ffffff;
+		--link: #5393dc;
+		--price: #5393dc;
+		--wages: #a869f0;
+		--unemployment: #ed8b00;
+		--underutilisation: #4ba4b1;
+		--above-trend: rgba(204, 204, 204, .16);
+		--gridline: #323232;
+		--reference-line: #999999;
+		--target-range: rgba(83, 147, 220, .30);
+		--button: #323232;
+		--button-hover: #5393dc;
+		--button-hover-text: #000000;
+		--button-border: #999999;
+		--button-pressed: #99c1dd;
+		--button-pressed-text: #000000;
+		--panel-muted-text: #cccccc;
+		--link-hover: #99c1dd;
+		--outside-target-range: #999999;
+	}
+}
+
+*, *::before, *::after {
+	box-sizing: inherit;
+}
+
+html {
+	scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+	margin: 0;
+	background: var(--background);
+	color: var(--text);
+	font-family: var(--body-font);
+	font-size: .875rem;
+	line-height: 1.5;
+}
+
+a {
+	color: var(--link);
+	text-decoration: none;
+}
+
+:focus-visible {
+	outline: 2px solid var(--link);
+	outline-offset: 2px;
+}
+
+.top-bar {
+	background: var(--top-bar);
+	color: var(--top-bar-text);
+}
+
+.top-bar .top-bar-inner {
+	max-width: 1180px;
+	margin: 0 auto;
+	padding: 10px 20px;
+	display: flex;
+	align-items: center;
+	gap: 24px;
+	flex-wrap: wrap;
+}
+
+.top-bar .site-name {
+	margin: 0;
+	font-family: var(--heading-font);
+	font-size: 1.125rem;
+	font-weight: 700;
+	letter-spacing: .01em;
+}
+
+main {
+	max-width: 1180px;
+	margin: 0 auto;
+	padding: 20px 20px 40px;
+}
+
+.headline-figures {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+	border: 1px solid var(--border);
+	background: var(--panel);
+	margin: 12px 0 0;
+}
+
+.headline-figures div {
+	padding: 8px 12px;
+	border-right: 1px solid var(--border);
+}
+
+.headline-figures div:last-child {
+	border-right: 0;
+}
+
+.headline-figures dt {
+	font-size: .75rem;
+	color: var(--panel-muted-text);
+}
+
+.headline-figures dd {
+	margin: 2px 0 0;
+	font-size: .9375rem;
+}
+
+.headline-figures dd b {
+	font-weight: 700;
+}
+
+.headline-figures .primary-figure dd b {
+	font-size: 1.25rem;
+}
+
+.headline-figures .run-summary {
+	display: block;
+	font-size: .875rem;
+}
+
+@media (min-width: 861px) {
+	.headline-figures .primary-figure {
+		grid-column: span 2;
+	}
+}
+
+@media (max-width: 860px) {
+	.headline-figures {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.headline-figures .primary-figure {
+		grid-column: 1 / -1;
+	}
+}
+
+.chart-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 14px;
+	border: 1px solid var(--border);
+	border-top: 0;
+	padding: 8px 12px;
+	font-size: .8125rem;
+}
+
+.chart-controls button {
+	font: inherit;
+	font-size: .75rem;
+	background: var(--button);
+	color: var(--text);
+	border: 1px solid var(--button-border);
+	padding: 3px 9px;
+	cursor: pointer;
+}
+
+.chart-controls button:hover {
+	background: var(--button-hover);
+	border-color: var(--button-hover);
+	color: var(--button-hover-text);
+}
+
+.chart-controls button:active {
+	background: var(--button-pressed);
+	border-color: var(--button-pressed);
+	color: var(--button-pressed-text);
+}
+
+.chart-controls button[aria-pressed="true"] {
+	background: var(--button-pressed);
+	border-color: var(--button-pressed);
+	color: var(--button-pressed-text);
+}
+
+.chart-controls button[aria-pressed="true"]:hover {
+	background: var(--button-pressed);
+	border-color: var(--button-pressed);
+	color: var(--button-pressed-text);
+}
+
+a:hover {
+	color: var(--link-hover);
+	text-decoration: underline;
+}
+
+.link-button {
+	min-height: 24px;
+	min-width: 24px;
+	font: inherit;
+	color: var(--link);
+	background: none;
+	border: 0;
+	padding: 0;
+	cursor: pointer;
+}
+
+.link-button:hover {
+	color: var(--link-hover);
+	text-decoration: underline;
+}
+
+.chart-controls .trend-group {
+	margin-left: auto;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+}
+
+.chart-title {
+	font-family: var(--heading-font);
+	font-size: 1rem;
+	font-weight: 400;
+	margin: 26px 0 0;
+	padding: 8px 12px;
+	border: 1px solid var(--border);
+	border-bottom: 0;
+	background: var(--panel);
+}
+
+.chart-box {
+	border: 1px solid var(--border);
+	border-top: 0;
+	padding: 10px 12px 6px;
+}
+
+.legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	font-size: .75rem;
+	color: var(--muted-text);
+	margin: 0 0 6px;
+}
+
+.legend i {
+	display: inline-block;
+	width: 20px;
+	vertical-align: middle;
+	margin-right: 5px;
+}
+
+.chart {
+	position: relative;
+	height: 360px;
+}
+
+.source-line {
+	font-size: .75rem;
+	color: var(--muted-text);
+	margin: 6px 0 0;
+}
+
+.chart-data {
+	margin: 6px 0 0;
+	font-size: .75rem;
+}
+
+.chart-data summary {
+	min-height: 24px;
+	color: var(--link);
+	cursor: pointer;
+}
+
+.chart-data summary:hover {
+	color: var(--link-hover);
+	text-decoration: underline;
+}
+
+.chart-data tbody th {
+	font-weight: 400;
+	color: var(--text);
+}
+
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+.columns {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 340px;
+	gap: 24px;
+	align-items: start;
+}
+
+.sidebar {
+	border: 1px solid var(--border);
+}
+
+.sidebar h3 {
+	margin: 0;
+	font-family: var(--heading-font);
+	padding: 8px 12px;
+	font-size: .8125rem;
+	font-weight: 700;
+	background: var(--panel);
+	border-bottom: 1px solid var(--border);
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+	font-size: .8125rem;
+}
+
+th {
+	text-align: left;
+	font-weight: 700;
+	padding: 6px 12px;
+	border-bottom: 1px solid var(--border);
+	color: var(--muted-text);
+}
+
+td {
+	padding: 5px 12px;
+	border-bottom: 1px solid var(--border);
+	font-variant-numeric: tabular-nums;
+}
+
+td.number, th.number {
+	text-align: right;
+}
+
+footer {
+	border-top: 1px solid var(--border);
+	margin-top: 36px;
+	padding-top: 12px;
+	font-size: .75rem;
+	color: var(--muted-text);
+}
+
+@media (max-width: 860px) {
+	.columns {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.chart {
+		height: 300px;
+	}
+}
+
+.chart-box.titled {
+	border-top: 1px solid var(--border);
+}
+
+.chart.short {
+	height: 260px;
+}
+
+.key-line {
+	border-top: 2px solid;
+}
+
+.key-line.price {
+	border-color: var(--price);
+}
+
+.key-line.wages {
+	border-color: var(--wages);
+}
+
+.key-line.trend {
+	border-top: 1px dashed var(--reference-line);
+}
+
+.key-box {
+	height: 10px;
+}
+
+.key-box.price {
+	background: var(--price);
+}
+
+.key-box.target-range {
+	background: var(--target-range);
+}
+
+.key-box.outside-target-range {
+	background: var(--outside-target-range);
+}
+
+th.group {
+	text-align: center;
+	padding-bottom: 0;
+	border-bottom: 0;
+}
+
+.key-line.unemployment {
+	border-color: var(--unemployment);
+}
+
+.key-line.underutilisation {
+	border-color: var(--underutilisation);
+}
+
+.key-box.above-trend {
+	background: var(--above-trend);
+	outline: 1px solid var(--border);
+}
+
+.legend i.key-marker {
+	width: 2px;
+	height: 12px;
+	margin: 0 9px;
+	background: var(--text);
+}
+
+@media (forced-colors: active) {
+	.legend i {
+		forced-color-adjust: none;
+	}
+
+	.chart-controls button[aria-pressed="true"],
+	.chart-controls button[aria-pressed="true"]:hover {
+		forced-color-adjust: none;
+		background: Highlight;
+		border-color: Highlight;
+		color: HighlightText;
+	}
+}
+
+@media print {
+	.chart-controls,
+	.link-button,
+	.chart-data {
+		display: none;
+	}
+
+	.chart-box,
+	.headline-figures,
+	.sidebar {
+		break-inside: avoid;
+	}
+
+	.legend i {
+		print-color-adjust: exact;
+	}
+}

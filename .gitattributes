@@ -1,0 +1,9 @@
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
+*.pdf binary
+*.xlsx binary
+*.zip binary
+*.woff2 binary
+assets/vendor/** linguist-vendored

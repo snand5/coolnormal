@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Australian Price Level vs 2.5% Trend</title>
+<meta name="description" content="Australia's consumer price level against a 2.5 or 2 per cent a year trend from the September quarter 1993, with the RBA's 2–3 per cent target range, the years needed to return to trend at different inflation rates, and wages. ABS data, updated weekly.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#003c7a">
+<link rel="canonical" href="https://coolnormal.com/">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Australian Price Level vs 2.5% Trend">
+<meta property="og:title" content="Australian Price Level vs 2.5% Trend">
+<meta property="og:description" content="Australia's consumer price level against a 2.5 or 2 per cent a year trend from the September quarter 1993, with the RBA's 2–3 per cent target range, the years needed to return to trend at different inflation rates, and wages. ABS data, updated weekly.">
+<meta property="og:url" content="https://coolnormal.com/">
+<meta property="og:image" content="https://coolnormal.com/assets/img/social.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Australian Price Level vs 2.5% Trend: CPI against a path growing 2.5 per cent a year from 1993.">
+<meta property="og:locale" content="en_AU">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Australian Price Level vs 2.5% Trend">
+<meta name="twitter:description" content="Australia's consumer price level against a 2.5 or 2 per cent a year trend from the September quarter 1993, with the RBA's 2–3 per cent target range, the years needed to return to trend at different inflation rates, and wages. ABS data, updated weekly.">
+<meta name="twitter:image" content="https://coolnormal.com/assets/img/social.png">
+<script type="application/ld+json">
+{
+	"@context": "https://schema.org",
+	"@type": "Dataset",
+	"name": "Australian price level vs a 2.5% trend",
+	"description": "Quarterly Australian CPI compared with a path growing 2.5 (or 2) per cent a year from the September quarter 1993, with the RBA's 2–3 per cent target range, the years needed to return to trend at different inflation rates, the Wage Price Index, and the unemployment and underutilisation rates. Derived from Australian Bureau of Statistics data and updated weekly.",
+	"url": "https://coolnormal.com/",
+	"license": "https://creativecommons.org/licenses/by/4.0/",
+	"isAccessibleForFree": true,
+	"keywords": [
+		"Australia",
+		"CPI",
+		"inflation",
+		"price level",
+		"price-level targeting",
+		"Reserve Bank of Australia",
+		"inflation target",
+		"Wage Price Index",
+		"unemployment",
+		"underutilisation"
+	],
+	"spatialCoverage": {
+		"@type": "Place",
+		"name": "Australia"
+	},
+	"temporalCoverage": "1985/..",
+	"isBasedOn": [
+		"https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia",
+		"https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/wage-price-index-australia",
+		"https://www.abs.gov.au/statistics/labour/employment-and-unemployment/labour-force-australia"
+	],
+	"creator": {
+		"@type": "Organization",
+		"name": "coolnormal.com"
+	},
+	"distribution": [
+		{
+			"@type": "DataDownload",
+			"encodingFormat": "application/json",
+			"contentUrl": "https://coolnormal.com/data/data.json"
+		}
+	]
+}
+</script>
+<link rel="license" href="https://creativecommons.org/licenses/by/4.0/">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="top-bar">
+	<div class="top-bar-inner">
+		<h1 class="site-name" id="page-title">Australian Price Level vs 2.5% Trend</h1>
+	</div>
+</div>
+
+<main>
+	<dl class="headline-figures">
+		<div class="primary-figure">
+			<dt id="gap-label">Price level vs 2.5% trend from the September quarter 1993</dt>
+			<dd><b id="gap-value">—</b>
+				<span class="run-summary" id="run-summary"></span></dd>
+		</div>
+		<div>
+			<dt id="headline-inflation-label">Headline inflation, year-ended</dt>
+			<dd><b id="headline-inflation-value">—</b></dd>
+		</div>
+		<div>
+			<dt id="wage-label">Real Wage Price Index</dt>
+			<dd><b id="wage-value">—</b></dd>
+		</div>
+		<div>
+			<dt id="labour-label">Unemployment and underutilisation</dt>
+			<dd><b id="labour-value">—</b></dd>
+		</div>
+		<div>
+			<dt id="average-inflation-label">Average inflation since the September quarter 1993</dt>
+			<dd><b id="average-inflation-value">—</b></dd>
+		</div>
+	</dl>
+
+	<div class="columns">
+		<div>
+			<h2 class="chart-title" id="gap-chart-title">Price level vs 2.5% trend from the September quarter 1993</h2>
+			<div class="chart-controls" role="group" aria-label="Chart range">
+				<button type="button" data-range-years="10">10Y</button>
+				<button type="button" data-range-years="20">20Y</button>
+				<button type="button" data-range-years="0" aria-pressed="true">Max</button>
+				<span class="trend-group" role="group" aria-label="Trend">
+					Trend
+					<button type="button" data-trend-rate="2.5" aria-pressed="true">2.5%</button>
+					<button type="button" data-trend-rate="2">2%</button>
+				</span>
+			</div>
+			<p class="visually-hidden" id="view-status" role="status"></p>
+			<div class="chart-box">
+				<div class="legend" aria-hidden="true">
+					<span><i class="key-line price"></i><span id="gap-legend-label">Price level vs 2.5% trend</span></span>
+					<span><i class="key-box target-range"></i>Paths at 2–3% a year from 1993</span>
+					<span><i class="key-marker"></i><span id="run-marker-legend-label">Above trend since the March quarter 2022</span></span>
+				</div>
+				<div class="chart">
+					<canvas id="gap-chart" role="img" aria-label="CPI price level relative to the selected trend from the September quarter 1993, quarterly, with the range of paths at 2 to 3 per cent a year shaded."></canvas>
+				</div>
+				<p class="source-line"><span class="source-text">Based on ABS data.</span> <button type="button" class="link-button" data-png-chart="gap-chart" data-png-title="gap-chart-title">PNG</button></p>
+				<p class="source-line" id="cpi-note">CPI is the ABS all groups CPI as published. It includes the 1999–2000 tax changes, among them the GST (the CPI rose 3.73 per cent in the September quarter 2000), and, before the September quarter 1998, interest charges. The RBA's own averages adjust both out.</p>
+				<details class="chart-data">
+					<summary>Data for this chart</summary>
+					<table aria-labelledby="gap-chart-title">
+						<thead>
+							<tr>
+								<th scope="col">Quarter</th>
+								<th scope="col" class="number">Vs trend, %</th>
+							</tr>
+						</thead>
+						<tbody id="gap-chart-data"></tbody>
+					</table>
+				</details>
+			</div>
+
+			<h2 class="chart-title" id="catch-up-chart-title">Years to get back on trend, by average inflation</h2>
+			<div class="chart-box titled">
+				<div class="legend" aria-hidden="true">
+					<span><i class="key-box price"></i>Inside 2–3% target range</span>
+					<span><i class="key-box outside-target-range"></i>Outside target range</span>
+				</div>
+				<div class="chart short">
+					<canvas id="catch-up-chart" role="img" aria-label="Years for the price level to return to the selected trend, for average inflation rates from 1 to 4 per cent a year."></canvas>
+				</div>
+				<p class="source-line"><span class="source-text">Based on ABS data.</span> <button type="button" class="link-button" data-png-chart="catch-up-chart" data-png-title="catch-up-chart-title">PNG</button></p>
+				<details class="chart-data">
+					<summary>Data for this chart</summary>
+					<table aria-labelledby="catch-up-chart-title">
+						<thead>
+							<tr>
+								<th scope="col">Average inflation, % a year</th>
+								<th scope="col" class="number">Years to get back on trend</th>
+							</tr>
+						</thead>
+						<tbody id="catch-up-chart-data"></tbody>
+					</table>
+				</details>
+			</div>
+
+			<h2 class="chart-title" id="wage-chart-title">CPI and Wage Price Index since prices went above trend</h2>
+			<div class="chart-box titled">
+				<div class="legend" aria-hidden="true">
+					<span><i class="key-line price"></i>CPI</span>
+					<span><i class="key-line wages"></i>Wage Price Index</span>
+					<span><i class="key-line trend"></i><span id="wage-trend-legend-label">2.5% trend</span></span>
+				</div>
+				<div class="chart short">
+					<canvas id="wage-chart" role="img" aria-label="CPI, Wage Price Index and the selected trend, indexed to the quarter prices crossed the trend."></canvas>
+				</div>
+				<p class="source-line"><span class="source-text">Based on ABS data.</span> <button type="button" class="link-button" data-png-chart="wage-chart" data-png-title="wage-chart-title">PNG</button></p>
+				<details class="chart-data">
+					<summary>Data for this chart</summary>
+					<table aria-labelledby="wage-chart-title">
+						<thead>
+							<tr>
+								<th scope="col">Quarter</th>
+								<th scope="col" class="number">CPI</th>
+								<th scope="col" class="number">Wage Price Index</th>
+								<th scope="col" class="number">Trend</th>
+							</tr>
+						</thead>
+						<tbody id="wage-chart-data"></tbody>
+					</table>
+				</details>
+			</div>
+
+			<h2 class="chart-title" id="labour-chart-title">Unemployment and underutilisation, with periods prices were above trend</h2>
+			<div class="chart-box titled">
+				<div class="legend" aria-hidden="true">
+					<span><i class="key-line unemployment"></i>Unemployment rate</span>
+					<span><i class="key-line underutilisation"></i>Underutilisation rate (unemployed plus underemployed)</span>
+					<span><i class="key-box above-trend"></i><span id="above-trend-legend-label">Prices above 2.5% trend</span></span>
+				</div>
+				<div class="chart short">
+					<canvas id="labour-chart" role="img" aria-label="Monthly unemployment and underutilisation rates, seasonally adjusted, with the quarters when prices were above the selected trend shaded."></canvas>
+				</div>
+				<p class="source-line"><span class="source-text">Based on ABS data.</span> <button type="button" class="link-button" data-png-chart="labour-chart" data-png-title="labour-chart-title">PNG</button></p>
+				<details class="chart-data">
+					<summary>Data for this chart</summary>
+					<table aria-labelledby="labour-chart-title">
+						<thead>
+							<tr>
+								<th scope="col">Month</th>
+								<th scope="col" class="number">Unemployment rate, %</th>
+								<th scope="col" class="number">Underutilisation rate, %</th>
+							</tr>
+						</thead>
+						<tbody id="labour-chart-data"></tbody>
+					</table>
+				</details>
+			</div>
+		</div>
+
+		<aside>
+			<div class="sidebar">
+				<h3>Recent quarters, per cent</h3>
+				<table aria-label="Recent quarters">
+					<thead>
+						<tr>
+							<th></th>
+							<th class="number group" colspan="2">Year-ended</th>
+							<th></th>
+						</tr>
+						<tr>
+							<th>Quarter</th>
+							<th class="number">Headline</th>
+							<th class="number">WPI</th>
+							<th class="number">Vs trend</th>
+						</tr>
+					</thead>
+					<tbody id="recent-quarters"></tbody>
+				</table>
+			</div>
+		</aside>
+	</div>
+
+	<noscript>
+		<p>The charts need JavaScript. The data is available as <a href="data/data.json">JSON</a>.</p>
+	</noscript>
+
+	<footer>
+		<p>
+			<span id="load-status"></span><span id="freshness"></span>
+			<button type="button" class="link-button" id="csv-download">CSV</button>
+			<a href="data/data.json">JSON</a>
+			<br>
+			Text, charts and data: <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>.
+			Code: <a href="LICENSE">MIT</a>. Based on ABS data.
+			Independent; not affiliated with the RBA or the ABS.
+		</p>
+	</footer>
+</main>
+
+<script src="assets/vendor/chart.js-4.4.1/chart.umd.js"></script>
+<script src="data/built-in-data.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

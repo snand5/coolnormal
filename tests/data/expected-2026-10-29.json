@@ -1,0 +1,38 @@
+{
+	"fixture": "fixtures/data-2026-10-29.json",
+	"tolerance": 1e-6,
+	"trends": [
+		{
+			"trend_rate": 2.5,
+			"latest_quarter": "2026-Q3",
+			"percent_above_trend": 8.084185,
+			"is_above": true,
+			"run_first_quarter": "2022-Q1",
+			"run_length_in_quarters": 19,
+			"average_inflation": 2.741750,
+			"annual_change": 3.920586,
+			"years_back_to_trend": [
+				[1, 5.273283], [1.25, 6.335749], [1.5, 7.929440],
+				[1.75, 10.585580], [2, 15.897845], [2.25, 31.834607]
+			],
+			"wage_window": ["2022-Q1", "2026-Q2"],
+			"wages_relative_to_prices": -2.368111
+		},
+		{
+			"trend_rate": 2,
+			"latest_quarter": "2026-Q3",
+			"percent_above_trend": 27.011791,
+			"is_above": true,
+			"run_first_quarter": "2000-Q1",
+			"run_length_in_quarters": 107,
+			"average_inflation": 2.741750,
+			"annual_change": 3.920586,
+			"years_back_to_trend": [
+				[1, 24.269443], [1.25, 32.399223], [1.5, 48.658735],
+				[1.75, 97.437171]
+			],
+			"wage_window": ["2000-Q1", "2026-Q2"],
+			"wages_relative_to_prices": 6.540039
+		}
+	]
+}
