@@ -142,6 +142,14 @@ def test_a_garbled_or_cut_off_reply_keeps_the_last_entry(rba, tmp_path,
 	assert read_all(tmp_path)["checked"] == NEXT_DAY
 
 
+def test_an_oversized_reply_is_rejected(rba, tmp_path):
+	feed = feed_text(statement("nov", "2026-11-03T14:30+11:00"))
+	padding = " " * (update_feed.LARGEST_FEED_IN_BYTES + 1)
+	rba.response = feed + padding
+
+	assert update_feed.main(tmp_path, FIRST_DAY) == 1
+
+
 def test_a_link_away_from_the_rba_is_rejected(rba, tmp_path):
 	rba.response = feed_text(("Elsewhere", "https://example.org/",
 				  "2026-11-03T14:30+11:00"))

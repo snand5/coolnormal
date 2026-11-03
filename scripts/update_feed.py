@@ -13,6 +13,7 @@ from update_data import (DEFAULT_DATA_DIRECTORY, LONGEST_ERROR_MESSAGE_KEPT,
 FEED_FILE = "rba-feeds.json"
 LINK_PREFIX = "https://www.rba.gov.au/"
 ISO_DATE_LENGTH = len("2026-11-03")
+LARGEST_FEED_IN_BYTES = 1_000_000
 SECONDS_TO_WAIT_FOR_RBA = 60
 NOT_MODIFIED = 304
 RSS_1_0 = {"rss": "http://purl.org/rss/1.0/",
@@ -70,9 +71,12 @@ def latest_entry(feed_bytes):
 def read_reply(request):
 	with urllib.request.urlopen(request,
 				    timeout=SECONDS_TO_WAIT_FOR_RBA) as reply:
-		feed_bytes = reply.read()
+		feed_bytes = reply.read(LARGEST_FEED_IN_BYTES + 1)
+		last_modified = reply.headers.get("Last-Modified")
 
-		return feed_bytes, reply.headers.get("Last-Modified")
+	if len(feed_bytes) > LARGEST_FEED_IN_BYTES:
+		raise FeedLooksWrong(f"the feed is over {LARGEST_FEED_IN_BYTES} bytes")
+	return feed_bytes, last_modified
 
 
 def fetch_feed(address, last_modified):
