@@ -365,6 +365,12 @@ td.number, th.number {
 	text-align: right;
 }
 
+th.group {
+	text-align: center;
+	padding-bottom: 0;
+	border-bottom: 0;
+}
+
 footer {
 	border-top: 1px solid var(--border);
 	margin-top: 36px;
@@ -420,12 +426,6 @@ footer {
 
 .key-box.outside-target-range {
 	background: var(--outside-target-range);
-}
-
-th.group {
-	text-align: center;
-	padding-bottom: 0;
-	border-bottom: 0;
 }
 
 .key-line.unemployment {
