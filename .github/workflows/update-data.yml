@@ -16,6 +16,7 @@ jobs:
       BOT_NAME: github-actions[bot]
       BOT_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
       FAILURE_MESSAGE: ABS fetch failed; cached data kept, see data/status.json
+      FEED_FAILURE_MESSAGE: RBA feed fetch failed; last entries kept, see data/rba-feeds.json
     steps:
       - name: Check out repository (actions/checkout v7.0.1)
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -35,20 +36,30 @@ jobs:
         id: fetch
         continue-on-error: true
         run: python scripts/update_data.py
+      - name: Fetch RBA feeds, keeping the last entries if a fetch fails
+        id: feeds
+        continue-on-error: true
+        run: python scripts/update_feed.py
       - name: Commit data and status
         if: always()
         run: |
           git config user.name "$BOT_NAME"
           git config user.email "$BOT_EMAIL"
           git add data/data.json data/built-in-data.js data/status.json
+          git add data/rba-feeds.json
           if git diff --cached --quiet; then
             echo "No data changes to commit"
           else
-            git commit -m "Update ABS data"
+            git commit -m "Update ABS data and RBA feeds"
             git push
           fi
-      - name: Flag failed fetches
+      - name: Flag failed ABS fetches
         if: steps.fetch.outcome == 'failure'
         run: |
           echo "::error::$FAILURE_MESSAGE"
+          exit 1
+      - name: Flag failed RBA feed fetches
+        if: always() && steps.feeds.outcome == 'failure'
+        run: |
+          echo "::error::$FEED_FAILURE_MESSAGE"
           exit 1

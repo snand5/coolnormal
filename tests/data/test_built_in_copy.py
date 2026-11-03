@@ -73,7 +73,7 @@ def test_workflow_commits_the_built_in_copy():
 		     if "git add" in line]
 
 	assert add_lines
-	assert all("data/" + AGREED_FILE in line for line in add_lines)
+	assert any("data/" + AGREED_FILE in line for line in add_lines)
 
 
 def test_page_loads_the_copy_before_app_js():
