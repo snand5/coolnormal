@@ -1383,9 +1383,9 @@ function show_feed(feeds_file)
 		fill_feed(entries);
 }
 
-function hide_feed()
+function no_feeds()
 {
-	element_by_id('rba-feed').hidden = true;
+	return {};
 }
 
 function report_missing_status()
@@ -1744,8 +1744,8 @@ function start()
 		.then(show_site)
 		.catch(show_load_error);
 	fetch_json(FEED_FILE)
-		.then(show_feed)
-		.catch(hide_feed);
+		.catch(no_feeds)
+		.then(show_feed);
 }
 
 function functions_for_tests()
