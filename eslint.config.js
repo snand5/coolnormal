@@ -4,7 +4,8 @@ const { builtinRules } = require('eslint/use-at-your-own-risk');
 
 const TAB_WIDTH = 8;
 const LINE_LIMIT = 80;
-const LINE_THAT_IS_ONLY_A_MESSAGE = '^\\s*([\'"`]).*\\1[\\s,;)+]*$';
+const LINE_THAT_IS_ONLY_A_MESSAGE =
+	'^\\s*([\'"`])(?:(?!\\1)[^\\\\]|\\\\.)*\\1[\\s,;)+]*$';
 
 const BROWSER_GLOBALS = [
 	'Blob', 'Chart', 'MutationObserver', 'URL', 'devicePixelRatio',
@@ -12,8 +13,8 @@ const BROWSER_GLOBALS = [
 	'matchMedia', 'module', 'setTimeout', 'window',
 ];
 const NODE_GLOBALS = [
-	'Buffer', 'URL', '__dirname', '__filename', 'console', 'module', 'process',
-	'require',
+	'Buffer', 'URL', '__dirname', '__filename', 'console', 'module',
+	'process', 'require',
 ];
 const PAGE_GLOBALS_IN_BROWSER_CALLBACKS = [
 	'Node', 'document', 'getComputedStyle', 'window',

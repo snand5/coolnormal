@@ -49,3 +49,16 @@ test('printing drops the controls and keeps each chart whole', () => {
 test('font sizes follow the reader\'s browser setting', () => {
 	assert.doesNotMatch(STYLES, /font-size: [0-9.]+px/);
 });
+
+test('the line-length exemption covers one message, not a list', () => {
+	const config = fs.readFileSync(
+		path.join(__dirname, '..', '..', 'eslint.config.js'), 'utf8');
+	const literal = config.match(
+		/LINE_THAT_IS_ONLY_A_MESSAGE =\s*'((?:[^'\\]|\\.)*)'/)[1];
+	const exempt = new RegExp(literal.replace(/\\(.)/g, '$1'));
+
+	assert.match("\t'Data could not be loaded.';", exempt);
+	assert.match("\t'Showing the built-in copy ' +", exempt);
+	assert.match("\t\"A message with a 'quoted' word\",", exempt);
+	assert.doesNotMatch("\t'Buffer', 'URL', 'console', 'module',", exempt);
+});
