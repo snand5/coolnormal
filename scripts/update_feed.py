@@ -19,16 +19,18 @@ NOT_MODIFIED = 304
 RSS_1_0 = {"rss": "http://purl.org/rss/1.0/",
 	   "dc": "http://purl.org/dc/elements/1.1/"}
 
+FeedSource = collections.namedtuple("FeedSource", "name address")
 
-Feed = collections.namedtuple("Feed", "name address")
-
-FEEDS = [
-	Feed(name="media_releases",
-	     address="https://www.rba.gov.au/rss/rss-cb-media-releases.xml"),
-	Feed(name="statement_on_monetary_policy",
-	     address="https://www.rba.gov.au/rss/rss-cb-smp.xml"),
-	Feed(name="speeches",
-	     address="https://www.rba.gov.au/rss/rss-cb-speeches.xml"),
+FEED_SOURCES = [
+	FeedSource(
+		name="media_releases",
+		address="https://www.rba.gov.au/rss/rss-cb-media-releases.xml"),
+	FeedSource(
+		name="statement_on_monetary_policy",
+		address="https://www.rba.gov.au/rss/rss-cb-smp.xml"),
+	FeedSource(
+		name="speeches",
+		address="https://www.rba.gov.au/rss/rss-cb-speeches.xml"),
 ]
 
 
@@ -117,15 +119,15 @@ def refresh_and_record(address, feed):
 
 def main(data_directory=DEFAULT_DATA_DIRECTORY, today=None):
 	path = data_directory / FEED_FILE
-	feeds = read_json(path, {"feeds": {}})
+	feeds_file = read_json(path, {"feeds": {}})
 	outcomes = {}
 
-	feeds["checked"] = today or datetime.date.today().isoformat()
-	for source in FEEDS:
-		feed = feeds["feeds"].setdefault(source.name, {})
+	feeds_file["checked"] = today or datetime.date.today().isoformat()
+	for source in FEED_SOURCES:
+		feed = feeds_file["feeds"].setdefault(source.name, {})
 		outcomes[source.name] = refresh_and_record(source.address, feed)
 	data_directory.mkdir(exist_ok=True)
-	replace_file(path, json.dumps(feeds, indent="\t"))
+	replace_file(path, json.dumps(feeds_file, indent="\t"))
 	for name, outcome in outcomes.items():
 		print(f"{name}: {outcome}")
 	return 1 if "failed" in outcomes.values() else 0
