@@ -26,9 +26,11 @@ def test_non_finite_value_is_rejected(monkeypatch, name, value):
 		update_data.fetch_from_abs(SERIES_BY_NAME[name])
 
 
-@pytest.mark.parametrize("name, period",
-			 [(name, period) for name, periods in BAD_PERIODS.items()
-			  for period in periods])
+BAD_PERIOD_CASES = [(name, period) for name, periods in BAD_PERIODS.items()
+		    for period in periods]
+
+
+@pytest.mark.parametrize("name, period", BAD_PERIOD_CASES)
 def test_period_in_wrong_form_is_rejected(monkeypatch, name, period):
 	serve(monkeypatch, {name: with_last_replaced(name, period=period)})
 
