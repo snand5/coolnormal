@@ -289,3 +289,12 @@ test('axis ticks use the same minus sign as the figures', () => {
 	assert.equal(app.signed_percent_tick(0), '0%');
 	assert.equal(app.signed_percent_tick(-2.5), '−2.5%');
 });
+
+test('the base quarter and band edges are written once, as constants', () => {
+	const source = require('node:fs').readFileSync(
+		require('node:path').join(__dirname, '..', '..', 'assets', 'js',
+					  'app.js'), 'utf8');
+
+	assert.equal(source.match(/1993/g).length, 1);
+	assert.doesNotMatch(source, /'Path at [0-9]/);
+});

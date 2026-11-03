@@ -465,7 +465,8 @@ function show_titles()
 	element_by_id('page-title').textContent = title;
 	document.title = title;
 	element_by_id('gap-chart-title').textContent =
-		'Price level vs ' + trend_rate + '% trend from the September quarter 1993';
+		'Price level vs ' + trend_rate + '% trend from the ' +
+		quarter_long_name(TREND_BASE_QUARTER);
 	element_by_id('gap-legend-label').textContent =
 		'Price level vs ' + trend_rate + '% trend';
 }
@@ -487,14 +488,15 @@ function show_gap_figures()
 	const gap = percent_above_trend(latest_quarter);
 
 	element_by_id('gap-label').textContent = 'Price level vs ' +
-		trend_rate + '% trend from the September quarter 1993, ' +
+		trend_rate + '% trend from the ' +
+		quarter_long_name(TREND_BASE_QUARTER) + ', ' +
 		quarter_long_name(latest_quarter);
 	element_by_id('gap-value').textContent =
 		format_signed_number(gap, 1) + '%';
 	element_by_id('run-summary').textContent = run_summary();
 	element_by_id('average-inflation-label').textContent =
-		'Average inflation, September quarter 1993 to ' +
-		quarter_long_name(latest_quarter);
+		'Average inflation, ' + quarter_long_name(TREND_BASE_QUARTER) +
+		' to ' + quarter_long_name(latest_quarter);
 	element_by_id('average-inflation-value').textContent =
 		format_number(average_inflation, 1) + '% a year';
 }
@@ -776,6 +778,16 @@ function quarters_since_trend_base()
 	return cpi_quarters.filter(quarter => quarter >= TREND_BASE_QUARTER);
 }
 
+function path_label(rate)
+{
+	return 'Path at ' + rate + '% a year';
+}
+
+function path_values(quarters, rate)
+{
+	return quarters.map(quarter => path_relative_to_trend(rate, quarter));
+}
+
 function draw_gap_chart()
 {
 	const quarters = quarters_since_trend_base();
@@ -786,12 +798,10 @@ function draw_gap_chart()
 		band_edge);
 	const gap_line = line_dataset('Vs trend',
 				      quarters.map(percent_above_trend));
-	const low_path = line_dataset('Path at 2% a year', quarters.map(
-		quarter => path_relative_to_trend(TARGET_RANGE_LOW, quarter)),
-		band_edge);
-	const high_path = line_dataset('Path at 3% a year', quarters.map(
-		quarter => path_relative_to_trend(TARGET_RANGE_HIGH, quarter)),
-		shaded_to_previous);
+	const low_path = line_dataset(path_label(TARGET_RANGE_LOW),
+		path_values(quarters, TARGET_RANGE_LOW), band_edge);
+	const high_path = line_dataset(path_label(TARGET_RANGE_HIGH),
+		path_values(quarters, TARGET_RANGE_HIGH), shaded_to_previous);
 	const run = current_run();
 	const first_in_view = first_quarter_shown(quarters);
 	const first_label = quarter_short_name(first_in_view);
@@ -936,7 +946,8 @@ function describe_gap_chart()
 	const gap = percent_above_trend(latest_quarter);
 
 	return 'Price level relative to the ' + trend_rate +
-	       '% trend, quarterly from the September quarter 1993: ' +
+	       '% trend, quarterly from the ' +
+	       quarter_long_name(TREND_BASE_QUARTER) + ': ' +
 	       format_signed_number(gap, 1) + ' per cent in the ' +
 	       quarter_long_name(latest_quarter) + ', ' + side +
 	       ' trend since the ' + quarter_long_name(run.first_quarter) +
