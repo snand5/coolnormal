@@ -347,3 +347,17 @@ test('the CSV gives the adjusted price level beside the CPI', () => {
 		     header.indexOf('cpi_index') + 1);
 	assert.equal(price_level, (cpi * 1.006).toFixed(4));
 });
+
+test('the CSV has no adjusted price level before the trend base', () => {
+	const earlier_quarter = { period: '1993-Q2', value: BASE_INDEX };
+	const data = {
+		cpi_quarterly: [earlier_quarter].concat(cpi_with_gaps([0, 0])),
+		interest_and_tax_adjustment: RBA_ADJUSTMENT,
+	};
+	const column = app.csv_header().indexOf('price_level_index');
+
+	app.set_trend_rate(2.5);
+	app.load_data(data);
+	assert.equal(app.csv_row('1993-Q2')[column], '');
+	assert.equal(app.csv_row('1993-Q3')[column], BASE_INDEX.toFixed(4));
+});

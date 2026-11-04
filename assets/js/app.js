@@ -1591,7 +1591,7 @@ function csv_row(quarter)
 	return [
 		quarter,
 		cpi_by_quarter[quarter],
-		price_level(quarter).toFixed(4),
+		since_trend_base ? price_level(quarter).toFixed(4) : '',
 		price_change === null ? '' : price_change.toFixed(3),
 		since_trend_base ? percent_above_trend(quarter).toFixed(3) : '',
 		wpi_by_quarter[quarter] ?? '',
