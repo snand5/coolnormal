@@ -20,7 +20,7 @@ The price level is the ABS all groups CPI adjusted, as the RBA does, for interes
 
 ## Data
 
-Every series comes from the ABS Data API and is refreshed weekly. If the ABS is unavailable, the page keeps showing the last good data and says so.
+Every ABS series comes from the ABS Data API and is refreshed weekly. If the ABS is unavailable, the page keeps showing the last good data and says so.
 
 | Series | ABS key |
 |---|---|

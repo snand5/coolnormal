@@ -113,6 +113,20 @@ test('sentences in the page metadata say "per cent"', () => {
 		assert.doesNotMatch(text, /[0-9]%/, text);
 });
 
+test('the page metadata credits the RBA data as well as the ABS', () => {
+	const descriptions = [...read('index.html').matchAll(
+		/(?:content=|"description": )"([^"]*updated weekly[^"]*)"/g)]
+		.map(match => match[1]);
+	const short_credit = /ABS and RBA data/;
+	const full_credit =
+		/Australian Bureau of Statistics and Reserve Bank of Australia/;
+
+	assert.ok(descriptions.length >= 4);
+	for (const text of descriptions)
+		assert.ok(short_credit.test(text) || full_credit.test(text),
+			  text);
+});
+
 test('the trend rates are tied to the RBA target range', () => {
 	const midpoint =
 		/2\.5 per cent[^.]*midpoint of the 2–3 per cent target range/;
