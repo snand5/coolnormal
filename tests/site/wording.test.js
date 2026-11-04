@@ -82,6 +82,12 @@ test('a quarter after "from" or "since" takes "the"', () => {
 		assert.doesNotMatch(read(file), missing_the, file);
 });
 
+test('the page names no run start until the data says which', () => {
+	const run_start_claim = /(Above|Below) trend since/;
+
+	assert.doesNotMatch(read('index.html'), run_start_claim);
+});
+
 test('the trend is explained as a yardstick, not a trend estimate', () => {
 	const explanation = /not a statistical trend estimate/;
 
