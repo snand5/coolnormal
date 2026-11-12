@@ -2,11 +2,11 @@
 	"feeds": {
 		"media_releases": {
 			"latest_entry": {
-				"title": "Statement by the Monetary Policy Board: Monetary Policy Decision",
-				"link": "https://www.rba.gov.au/media-releases/2026/mr-26-30.html",
-				"date": "2026-11-03"
+				"title": "Designation of Prosegur Australia Pty Ltd under the Cash Distribution Framework Act 2026",
+				"link": "https://www.rba.gov.au/media-releases/2026/mr-26-31.html",
+				"date": "2026-11-06"
 			},
-			"last_modified": "Tue, 03 Nov 2026 04:15:36 GMT",
+			"last_modified": "Thu, 05 Nov 2026 23:52:35 GMT",
 			"error": null
 		},
 		"statement_on_monetary_policy": {
@@ -20,13 +20,13 @@
 		},
 		"speeches": {
 			"latest_entry": {
-				"title": "Trust, Expectations and Monetary Policy",
-				"link": "https://www.rba.gov.au/speeches/2026/sp-dg-2026-11-05.html",
-				"date": "2026-11-05"
+				"title": "What Happens to the Economy as \u2018Intelligence\u2019 Gets Cheaper?",
+				"link": "https://www.rba.gov.au/speeches/2026/sp-sp-ag-2026-11-09.html",
+				"date": "2026-11-09"
 			},
-			"last_modified": "Thu, 05 Nov 2026 06:18:29 GMT",
+			"last_modified": "Sun, 08 Nov 2026 22:20:39 GMT",
 			"error": null
 		}
 	},
-	"checked": "2026-11-05"
+	"checked": "2026-11-12"
 }
