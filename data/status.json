@@ -1,8 +1,8 @@
 {
-	"checked": "2026-11-12",
+	"checked": "2026-11-19",
 	"series": {
 		"cpi_quarterly": {
-			"last_success": "2026-11-12",
+			"last_success": "2026-11-19",
 			"latest": "2026-Q3",
 			"error": null,
 			"failing_since": null,
@@ -10,15 +10,15 @@
 			"outcome": "unchanged"
 		},
 		"wpi_quarterly": {
-			"last_success": "2026-11-12",
-			"latest": "2026-Q2",
+			"last_success": "2026-11-19",
+			"latest": "2026-Q3",
 			"error": null,
 			"failing_since": null,
 			"note": null,
-			"outcome": "unchanged"
+			"outcome": "updated"
 		},
 		"cpi_monthly": {
-			"last_success": "2026-11-12",
+			"last_success": "2026-11-19",
 			"latest": "2026-09",
 			"error": null,
 			"failing_since": null,
@@ -26,17 +26,17 @@
 			"outcome": "unchanged"
 		},
 		"unemployment_rate": {
-			"outcome": "unchanged",
-			"last_success": "2026-11-12",
-			"latest": "2026-09",
+			"outcome": "updated",
+			"last_success": "2026-11-19",
+			"latest": "2026-10",
 			"error": null,
 			"failing_since": null,
 			"note": null
 		},
 		"underutilisation_rate": {
-			"outcome": "unchanged",
-			"last_success": "2026-11-12",
-			"latest": "2026-09",
+			"outcome": "updated",
+			"last_success": "2026-11-19",
+			"latest": "2026-10",
 			"error": null,
 			"failing_since": null,
 			"note": null
